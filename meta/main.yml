@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Jaroslav Škarvada <jskarvad@redhat.com>
+  description: Configure Postfix
+  galaxy_tags: [ 'system', 'beta' ]
+  company: Red Hat, Inc.
+  license: GPL-3.0+
+  min_ansible_version: 2.2
+  platforms:
+  - name: Fedora
+    versions: [ 24, 25 ]
+  - name: EL
+    versions: [ 6, 7 ]
+
+
