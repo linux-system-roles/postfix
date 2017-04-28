@@ -1,0 +1,9 @@
+---
+- name: check postfix
+  command: postfix check
+  when: postfix_check
+  listen: check restart postfix
+
+- name: restart postfix
+  service: name=postfix state=restarted
+  listen: check restart postfix

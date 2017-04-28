@@ -1,0 +1,32 @@
+---
+- name: Install Postfix
+  package: name=postfix state=latest
+
+- name: Enable Postfix
+  service: name=postfix state=started enabled=yes
+
+- name: Backup configuration
+  shell: cp /etc/postfix/main.cf /etc/postfix/main.cf.{{ postfix_backup_multiple | ternary("`date -Iseconds`", "backup") }}
+  when: postfix_backup or postfix_backup_multiple
+
+- name: Add header 1 to configuration file
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    regexp: '# Last modified:'
+    state: present
+    insertbefore: BOF
+    line: "# Last modified: {{ ansible_date_time.date }}\n"
+
+- name: Add header 2 to configuration file
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    regexp: 'managed by [aA]nsible'
+    state: present
+    insertbefore: BOF
+    line: "# This file is managed by Ansible"
+
+- name: Configure Postfix
+  command: "postconf -e \"{{ item.key }}={{ item.value }}\""
+  ignore_errors: true
+  notify: check restart postfix
+  with_dict: "{{ postfix_conf }}"
