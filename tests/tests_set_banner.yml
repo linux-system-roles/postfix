@@ -6,7 +6,7 @@
     postfix_conf:
       smtpd_banner: "test"
   roles:
-    - postfix
+    - linux-system-roles.postfix
 
   tasks:
     - name: Get smtpd banner
