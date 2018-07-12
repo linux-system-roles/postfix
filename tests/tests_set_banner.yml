@@ -1,0 +1,17 @@
+
+- name: Set smtpd banner
+  hosts: all
+
+  vars:
+    postfix_conf:
+      smtpd_banner: "test"
+  roles:
+    - linux-system-roles.postfix
+
+  tasks:
+    - name: Get smtpd banner
+      command: postconf smtpd_banner
+      register: smtpd_banner
+
+    - assert:
+        that: "{{ smtpd_banner.stdout_lines[0] == 'smtpd_banner = test' }}"
