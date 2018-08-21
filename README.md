@@ -17,7 +17,7 @@ Example Playbook
 
 Install and enable postfix. Configure "relay_domains=$mydestination" and
 
-```
+```yaml
 ---
 - hosts: all
   vars:
@@ -31,7 +31,7 @@ Install and enable postfix. Configure "relay_domains=$mydestination" and
 Install and enable postfix. Do not run 'postfix check' before restarting
 postfix:
 
-```
+```yaml
 ---
 - hosts: all
   vars:
@@ -43,7 +43,7 @@ postfix:
 Install and enable postfix. Do single backup of main.cf (older backup will be
 rewritten) and configure "relay_host=example.com":
 
-```
+```yaml
 ---
 - hosts: all
   vars:
@@ -58,7 +58,7 @@ Install and enable postfix. Do timestamped backup of main.cf and
 configure "relay_host=example.com" (if postfix_backup_multiple is
 set to true postfix_backup is ignored):
 
-```
+```yaml
 ---
 - hosts: all
   vars:
