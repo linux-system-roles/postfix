@@ -1,5 +1,6 @@
 postfix
 =======
+[![Travis Build Status](https://travis-ci.org/linux-system-roles/postfix.svg?branch=master)](https://travis-ci.org/linux-system-roles/postfix)
 
 This role can install, configure and start Postfix MTA.
 
