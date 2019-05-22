@@ -25,8 +25,16 @@
     insertbefore: BOF
     line: "# This file is managed by Ansible"
 
+- name: Check Postfix config option
+  shell: "postconf -h \"{{ item.key }}\" | grep \"^{{ item.value | regex_escape }}$\""
+  ignore_errors: true
+  changed_when: false
+  loop: "{{ postfix_conf | dict2items }}"
+  register: postconf_check
+
 - name: Configure Postfix
-  command: "postconf -e \"{{ item.key }}={{ item.value }}\""
+  command: "postconf -e \"{{ item.item.key }}={{ item.item.value }}\""
   ignore_errors: true
   notify: check restart postfix
-  loop: "{{ postfix_conf | dict2items }}"
+  when: item.rc != 0
+  loop: "{{ postconf_check.results }}"
