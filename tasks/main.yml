@@ -29,4 +29,4 @@
   command: "postconf -e \"{{ item.key }}={{ item.value }}\""
   ignore_errors: true
   notify: check restart postfix
-  with_dict: "{{ postfix_conf }}"
+  loop: "{{ postfix_conf | dict2items }}"
