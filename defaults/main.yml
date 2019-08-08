@@ -15,3 +15,6 @@ postfix_backup: false
 # Whether to do multiple backups with timestamp (if true) or
 # single backup (if false and postfix_backup == true)
 postfix_backup_multiple: true
+
+# variable to hold the postconf key which needs update
+postfix_conf_outstanding: []
