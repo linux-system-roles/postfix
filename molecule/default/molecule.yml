@@ -29,7 +29,6 @@ scenario:
   test_sequence:
     - destroy
     - create
-    - converge
     - idempotence
     - check
     - destroy
