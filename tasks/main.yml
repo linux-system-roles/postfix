@@ -1,11 +1,11 @@
 ---
 - name: Install Postfix
-  package: name=postfix state=latest
+  package: name=postfix state=present
 
 - name: Enable Postfix
   service: name=postfix state=started enabled=yes
 
-- name: Backup configuration
+- name: Backup configuration  # noqa 305
   shell: >-
     cp /etc/postfix/main.cf /etc/postfix/main.cf.{{
       postfix_backup_multiple | ternary("`date -Iseconds`", "backup")
@@ -28,7 +28,7 @@
     insertbefore: BOF
     line: "# This file is managed by Ansible"
 
-- name: Configure Postfix
+- name: Configure Postfix  # noqa 301
   command: "postconf -e \"{{ item.key }}={{ item.value }}\""
   ignore_errors: true
   notify: check restart postfix

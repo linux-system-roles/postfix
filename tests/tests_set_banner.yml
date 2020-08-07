@@ -8,9 +8,10 @@
     - linux-system-roles.postfix
 
   tasks:
-    - name: Get smtpd banner
+    - name: Get smtpd banner  # noqa 301
       command: postconf smtpd_banner
       register: smtpd_banner
 
-    - assert:
+    - name: check banner
+      assert:
         that: "{{ smtpd_banner.stdout_lines[0] == 'smtpd_banner = test' }}"
