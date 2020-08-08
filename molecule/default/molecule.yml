@@ -29,7 +29,6 @@ scenario:
   test_sequence:
     - destroy
     - create
-    - idempotence
     - check
     - destroy
 verifier:
