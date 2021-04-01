@@ -23,7 +23,7 @@ Install and enable postfix. Configure "relay_domains=$mydestination" and
   vars:
     postfix_conf:
       relay_domains: "$mydestination"
-      relay_host: "example.com"
+      relayhost: "example.com"
   roles:
     - postfix
 ```
@@ -41,21 +41,21 @@ postfix:
 ```
 
 Install and enable postfix. Do single backup of main.cf (older backup will be
-rewritten) and configure "relay_host=example.com":
+rewritten) and configure "relayhost=example.com":
 
 ```yaml
 ---
 - hosts: all
   vars:
     postfix_conf:
-      relay_host: "example.com"
+      relayhost: "example.com"
     postfix_backup: true
   roles:
     - postfix
 ```
 
 Install and enable postfix. Do timestamped backup of main.cf and
-configure "relay_host=example.com" (if postfix_backup_multiple is
+configure "relayhost=example.com" (if postfix_backup_multiple is
 set to true postfix_backup is ignored):
 
 ```yaml
@@ -63,7 +63,7 @@ set to true postfix_backup is ignored):
 - hosts: all
   vars:
     postfix_conf:
-      relay_host: "example.com"
+      relayhost: "example.com"
     postfix_backup_multiple: true
   roles:
     - postfix
