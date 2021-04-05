@@ -12,6 +12,8 @@
     - name: Get smtpd banner
       command: postconf smtpd_banner
       register: smtpd_banner
+      changed_when: false
 
-    - assert:
+    - name: Assert smtpd banner is valid
+      assert:
         that: "{{ smtpd_banner.stdout_lines[0] == 'smtpd_banner = test' }}"
