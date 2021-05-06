@@ -25,7 +25,7 @@ Install and enable postfix. Configure "relay_domains=$mydestination" and
       relay_domains: "$mydestination"
       relayhost: "example.com"
   roles:
-    - postfix
+    - linux-system-roles.postfix
 ```
 
 Install and enable postfix. Do not run 'postfix check' before restarting
@@ -37,7 +37,7 @@ postfix:
   vars:
     postfix_check: false
   roles:
-    - postfix
+    - linux-system-roles.postfix
 ```
 
 Install and enable postfix. Do single backup of main.cf (older backup will be
@@ -51,7 +51,7 @@ rewritten) and configure "relayhost=example.com":
       relayhost: "example.com"
     postfix_backup: true
   roles:
-    - postfix
+    - linux-system-roles.postfix
 ```
 
 Install and enable postfix. Do timestamped backup of main.cf and
@@ -66,7 +66,7 @@ set to true postfix_backup is ignored):
       relayhost: "example.com"
     postfix_backup_multiple: true
   roles:
-    - postfix
+    - linux-system-roles.postfix
 ```
 
 
