@@ -1,9 +1,14 @@
 ---
 - name: Install Postfix
-  package: name=postfix state=latest
+  package:
+    name: postfix
+    state: present
 
 - name: Enable Postfix
-  service: name=postfix state=started enabled=yes
+  service:
+    name: postfix
+    state: started
+    enabled: yes
 
 - name: Backup configuration
   shell: >-
