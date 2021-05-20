@@ -1,4 +1,3 @@
-
 - name: Set smtpd banner
   hosts: all
 
