@@ -1,21 +1,67 @@
-postfix
-=======
+# postfix
+![CI Testing](https://github.com/linux-system-roles/posffix/workflows/tox/badge.svg)
 
 This role can install, configure and start Postfix MTA.
 
+# Role Variables
 
-Role Variables
---------------
+### postfix_conf
 
-This role provides Postfix configuration dictionary 'postfix_conf' which can
-hold key/value pairs of all supported Postfix configuration parameters. Keys
-not supported by the installed Postfix are ignored.
+```
+postfix_conf:
+  relayhost: "example.com"
+```
 
+This is a dictionary which can hold key/value pairs of all supported Postfix
+configuration parameters. Keys not supported by the installed Postfix are
+ignored.  The default is empty `{}`.
 
-Example Playbook
------------------
+### postfix_check
 
-Install and enable postfix. Configure "relay_domains=$mydestination" and
+```
+postfix_check: false
+```
+
+This is a boolean which determines if `postfix check` is run before starting
+Postfix if the configuration has changed.  The default is `true`.
+
+### postfix_backup
+
+```
+postfix_backup: true
+```
+
+This is a boolean which determines if the role will make a single backup copy of
+the configuration - for example,
+`cp /etc/postfix/main.cf /etc/postfix/main.cf.backup`,
+thus overwriting the previous backup, if any.  The default is `false`.  NOTE: If
+you want to set this to `true`, you must also set `postfix_backup_multiple:
+false` - see below.
+
+### postfix_backup_multiple
+
+```
+postfix_backup_multiple: false
+```
+
+This is a boolean which determines if the role will make a timestamped backup copy of
+the configuration - for example,
+`cp /etc/postfix/main.cf /etc/postfix/main.cf.$(date -Isec)`,
+thus keeping multiple backup copies.  The default is `true`.  NOTE: This setting
+overrides `postfix_backup`, so you must set this to `false` if you want to use
+`postfix_backup`.
+
+## Limitations
+
+There is no way to remove configuration parameters.  If you know all of the
+configuration parameters that you want to set, you can use the `file` module to
+remove `/etc/postfix/main.cf` before running this role, with `postfix_conf` set
+to all of the configuration parameters you want to apply.
+
+## Example Playbook
+
+Install and enable postfix. Configure `relay_domains=$mydestination` and
+`relayhost=example.com`.
 
 ```yaml
 ---
@@ -41,7 +87,7 @@ postfix:
 ```
 
 Install and enable postfix. Do single backup of main.cf (older backup will be
-rewritten) and configure "relayhost=example.com":
+rewritten) and configure `relayhost=example.com`:
 
 ```yaml
 ---
@@ -55,8 +101,8 @@ rewritten) and configure "relayhost=example.com":
 ```
 
 Install and enable postfix. Do timestamped backup of main.cf and
-configure "relayhost=example.com" (if postfix_backup_multiple is
-set to true postfix_backup is ignored):
+configure `relayhost=example.com` (if `postfix_backup_multiple` is
+set to true `postfix_backup` is ignored):
 
 ```yaml
 ---
@@ -69,9 +115,7 @@ set to true postfix_backup is ignored):
     - linux-system-roles.postfix
 ```
 
-
-License
--------
+## License
 
 Copyright (C) 2017 Jaroslav Škarvada <jskarvad@redhat.com>
 
