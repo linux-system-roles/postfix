@@ -5,5 +5,7 @@
   listen: check restart postfix
 
 - name: restart postfix
-  service: name=postfix state=restarted
+  service:
+    name: postfix
+    state: restarted
   listen: check restart postfix
