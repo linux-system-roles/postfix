@@ -55,6 +55,7 @@
         regexp: 'managed by [aA]nsible'
         state: present
         insertbefore: BOF
+        firstmatch: true
         line: "# This file is managed by Ansible"
 
     - name: Configure Postfix
