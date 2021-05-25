@@ -10,31 +10,55 @@
     state: started
     enabled: yes
 
-- name: Backup configuration
-  shell: >-
-    set -euo pipefail;
-    cp /etc/postfix/main.cf
-    /etc/postfix/main.cf.{{ postfix_backup_multiple |
-    ternary("$(date -Iseconds)", "backup") }}
-  when: postfix_backup or postfix_backup_multiple
-
-- name: Ensure Last modified header is absent
-  lineinfile:
-    dest: /etc/postfix/main.cf
-    regexp: '# Last modified:'
-    state: absent
-
-- name: Ensure Ansible Managed header in configuration file
-  lineinfile:
-    dest: /etc/postfix/main.cf
-    regexp: 'managed by [aA]nsible'
-    state: present
-    insertbefore: BOF
-    line: "# This file is managed by Ansible"
-
-- name: Configure Postfix
-  command: "postconf -e \"{{ item.key }}={{ item.value }}\""
-  ignore_errors: true
-  notify: check restart postfix
-  with_dict: "{{ postfix_conf }}"
+- name: Get current config
+  command: postconf
+  register: __postfix_register_config
   changed_when: false
+  when: postfix_conf | d({}) | length > 0
+
+- name: Check given config against current config
+  changed_when: false
+  when:
+    - postfix_conf | d({}) | length > 0
+    - __postfix_register_config is defined
+    - __postfix_register_config.stdout_lines is defined
+  set_fact:
+    __postfix_has_config_changed: |-
+      {% for key, val in postfix_conf.items() %}
+      {%   set space = ' ' if val else '' %}
+      {%   set itemstr = '{} ={}{}'.format(key, space, val) %}
+      {%   if itemstr not in __postfix_register_config.stdout_lines %}
+      True itemstr {{ itemstr }} is not in __postfix_register_config
+      {%   endif %}
+      {% endfor %}
+
+- name: Apply changes
+  when: __postfix_has_config_changed | d("") is search("True")
+  block:
+    - name: Backup configuration
+      shell: >-
+        set -euo pipefail;
+        cp /etc/postfix/main.cf
+        /etc/postfix/main.cf.{{ postfix_backup_multiple |
+        ternary("$(date -Iseconds)", "backup") }}
+      when: postfix_backup or postfix_backup_multiple
+
+    - name: Ensure Last modified header is absent
+      lineinfile:
+        dest: /etc/postfix/main.cf
+        regexp: '# Last modified:'
+        state: absent
+
+    - name: Ensure Ansible Managed header in configuration file
+      lineinfile:
+        dest: /etc/postfix/main.cf
+        regexp: 'managed by [aA]nsible'
+        state: present
+        insertbefore: BOF
+        firstmatch: true
+        line: "# This file is managed by Ansible"
+
+    - name: Configure Postfix
+      command: postconf -e {{ item.key | quote }}={{ item.value | quote }}
+      notify: check restart postfix
+      with_dict: "{{ postfix_conf }}"
