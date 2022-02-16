@@ -140,3 +140,6 @@
       command: postconf -e {{ item.key | quote }}={{ item.value | quote }}
       notify: check restart postfix
       with_dict: "{{ postfix_conf }}"
+      when: __postfix_has_config_changed | d("") is search(
+        "True itemstr " + item.key
+        )
