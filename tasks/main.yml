@@ -10,6 +10,84 @@
     state: started
     enabled: yes
 
+- name: Add default values for changed settings to postfix_conf
+  when: postfix_reset | bool
+  block:
+    - name: Get settings that are different from default
+      shell: |
+        set -euo pipefail
+
+        settings_to_apply=__postconf_settings_to_apply.txt
+        current_settings=__postconf_current.txt
+        default_settings=__postconf_defaults.txt
+        postconf > $current_settings
+        postconf -d > $default_settings
+
+        # This is the list of settings that differ on RHEL and Fedora from what
+        # `postconf -d` displays by default
+        declare -A red_hat_defaults
+        red_hat_defaults["alias_maps"]="hash:/etc/aliases"
+        red_hat_defaults["compatibility_level"]="2"
+        red_hat_defaults["debugger_command"]='PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin ddd $daemon_directory/$process_name $process_id \& sleep 5'
+        red_hat_defaults["inet_interfaces"]="localhost"
+        red_hat_defaults["mailq_path"]="/usr/bin/mailq.postfix"
+        red_hat_defaults["manpage_directory"]="/usr/share/man"
+        red_hat_defaults["mynetworks"]="127.0.0.1/32 [::1]/128"
+        red_hat_defaults["newaliases_path"]="/usr/bin/newaliases.postfix"
+        red_hat_defaults["readme_directory"]="/usr/share/doc/postfix/README_FILES"
+        red_hat_defaults["sample_directory"]="/usr/share/doc/postfix/samples"
+        red_hat_defaults["sendmail_path"]="/usr/sbin/sendmail.postfix"
+        red_hat_defaults["smtp_tls_CAfile"]="/etc/pki/tls/certs/ca-bundle.crt"
+        red_hat_defaults["smtp_tls_CApath"]="/etc/pki/tls/certs"
+        red_hat_defaults["smtp_tls_security_level"]="may"
+        red_hat_defaults["smtpd_tls_cert_file"]="/etc/pki/tls/certs/postfix.pem"
+        red_hat_defaults["smtpd_tls_key_file"]="/etc/pki/tls/private/postfix.key"
+        red_hat_defaults["smtpd_tls_security_level"]="may"
+
+        # Settings that must keep the value
+        # smtpd_expansion filter is difficult to compare
+        # process_id is unique for each system
+        settings_to_ignore="smtpd_expansion_filter process_id"
+
+        # In $default_settings, substitute values for settings that differ from
+        # the upstream default
+        for K in "${!red_hat_defaults[@]}"; do
+          sed -i "s|^$K.*|$K = ${red_hat_defaults[$K]}|g" $default_settings
+        done
+
+        if [ -f "$settings_to_apply" ]; then
+          rm $settings_to_apply
+        fi
+
+        # Compare $default_settings with $current_settings and append settings
+        # that differ to $settings_to_apply
+        while read line; do
+          if ! grep -Fxq "$line" $current_settings; then
+            echo $line >> $settings_to_apply
+          fi
+        done < $default_settings
+
+        # Remove inapplicable settings from the $settings_to_apply list
+        for i in $settings_to_ignore; do
+          sed -i "/^$i/d" $settings_to_apply
+        done
+
+        cat $settings_to_apply
+        rm $current_settings $default_settings $settings_to_apply --force
+      register: __postfix_reset_settings
+      changed_when: false
+
+    - name: Create a dictionary of settings that needs reset with default values
+      set_fact:
+        __postfix_reset_settings_dict: "{{ dict(__postfix_reset_settings.stdout_lines | map('regex_search', '^([^=\\s]*)\\s*=\\s*(.*)', '\\1', '\\2') | list ) }}"
+
+    - name: Merge postfix_conf and __postfix_reset_settings_dict
+      set_fact:
+        postfix_conf: "{{ postfix_conf | default({}) | combine ({ item.key : item.value }) }}"
+      with_dict:
+        - "{{ __postfix_reset_settings_dict }}"
+        - "{{ postfix_conf }}"
+
 - name: Get current config
   command: postconf
   register: __postfix_register_config

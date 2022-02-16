@@ -15,3 +15,4 @@ postfix_backup: false
 # Whether to do multiple backups with timestamp (if true) or
 # single backup (if false and postfix_backup == true)
 postfix_backup_multiple: true
+postfix_reset: false

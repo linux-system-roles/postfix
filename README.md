@@ -51,6 +51,16 @@ thus keeping multiple backup copies.  The default is `true`.  NOTE: This setting
 overrides `postfix_backup`, so you must set this to `false` if you want to use
 `postfix_backup`.
 
+### postfix_reset
+
+```
+postfix_reset: false
+```
+
+This is a boolean which determines if the role resets the postfix configuration
+to default values. You can use this with `postfix_conf` to reset settings to
+default values and apply your desired configuration on top of default settings.
+
 ## Limitations
 
 There is no way to remove configuration parameters.  If you know all of the
