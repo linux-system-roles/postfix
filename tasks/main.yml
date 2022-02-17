@@ -49,14 +49,20 @@
         regexp: '# Last modified:'
         state: absent
 
-    - name: Ensure Ansible Managed header in configuration file
+    - name: Ensure the outdated ansible managed header is absent
       lineinfile:
         dest: /etc/postfix/main.cf
-        regexp: 'managed by [aA]nsible'
-        state: present
+        regexp: "# This file is managed by [aA]nsible"
+        state: absent
+
+    - name: Ensure ansible_managed header in configuration file
+      vars:
+        __postfix_ansible_managed: "{{
+          lookup('template', 'get_ansible_managed.j2') | trim }}"
+      blockinfile:
+        dest: /etc/postfix/main.cf
+        block: "{{ __postfix_ansible_managed }}"
         insertbefore: BOF
-        firstmatch: true
-        line: "# This file is managed by Ansible"
 
     - name: Configure Postfix
       command: postconf -e {{ item.key | quote }}={{ item.value | quote }}
