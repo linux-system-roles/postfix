@@ -1,7 +1,7 @@
 ---
 - name: Install Postfix
   package:
-    name: postfix
+    name: "{{ __postfix_packages }}"
     state: present
 
 - name: Enable Postfix

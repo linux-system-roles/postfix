@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# List of default rpm packages to install.
+__postfix_packages: ['postfix']
