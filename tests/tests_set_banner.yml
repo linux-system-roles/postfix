@@ -15,4 +15,6 @@
 
     - name: Assert smtpd banner is valid
       assert:
-        that: "{{ smtpd_banner.stdout_lines[0] == 'smtpd_banner = test' }}"
+        that: "{{
+          smtpd_banner.stdout_lines[0] ==
+          'smtpd_banner = ' + postfix_conf.smtpd_banner }}"
