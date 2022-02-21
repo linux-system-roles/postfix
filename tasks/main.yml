@@ -49,6 +49,8 @@
         regexp: '# Last modified:'
         state: absent
 
+    # Previously, the role inserted a plain-text comment at the top of main.cf.
+    # This task removes this outdated header for compatibility.
     - name: Ensure the outdated ansible managed header is absent
       lineinfile:
         dest: /etc/postfix/main.cf
@@ -58,7 +60,7 @@
     - name: Ensure ansible_managed header in configuration file
       vars:
         __postfix_ansible_managed: "{{
-          lookup('template', 'get_ansible_managed.j2') | trim }}"
+          lookup('template', 'get_ansible_managed.j2') }}"
       blockinfile:
         dest: /etc/postfix/main.cf
         block: "{{ __postfix_ansible_managed }}"
