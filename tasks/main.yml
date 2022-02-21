@@ -45,7 +45,7 @@
 
     - name: Ensure Last modified header is absent
       lineinfile:
-        dest: /etc/postfix/main.cf
+        path: /etc/postfix/main.cf
         regexp: '# Last modified:'
         state: absent
 
@@ -53,7 +53,7 @@
     # This task removes this outdated header for compatibility.
     - name: Ensure the outdated ansible managed header is absent
       lineinfile:
-        dest: /etc/postfix/main.cf
+        path: /etc/postfix/main.cf
         regexp: "# This file is managed by [aA]nsible"
         state: absent
 
@@ -62,7 +62,7 @@
         __postfix_ansible_managed: "{{
           lookup('template', 'get_ansible_managed.j2') }}"
       blockinfile:
-        dest: /etc/postfix/main.cf
+        path: /etc/postfix/main.cf
         block: "{{ __postfix_ansible_managed }}"
         insertbefore: BOF
 
