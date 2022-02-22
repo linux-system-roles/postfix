@@ -16,17 +16,18 @@ This is a dictionary which can hold key/value pairs of all supported Postfix
 configuration parameters. Keys not supported by the installed Postfix are
 ignored.  The default is empty `{}`.
 
-You can specify `previous: replaced` within the `postfix_conf` variable to
+You can specify `previous: replaced` within the `postfix_conf` dictionary to
 remove any existing configuration and apply the desired configuration on top of
 clean postfix installation.
 
-WARNING: If you specify `previous: replaced`, the role reinstalls the postfix
+**WARNING**: If you specify `previous: replaced`, the role reinstalls the postfix
 package and replaces the existing `/etc/postfix/main.cf` and
 `/etc/postix/master.cf` files. Ensure to back up those files to preserve your
 settings.
 
-If you specify only `previous: replaced` under the postfix_conf dict, the role
-installs the `postfix` package and enables the `postfix` service.
+If you specify only `previous: replaced` under the `postfix_conf` dictionary,
+the role re-installs the `postfix` package and enables the `postfix` service
+without applying any configuration.
 
 Example of settings `previous: replaced`:
 
