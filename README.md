@@ -9,7 +9,7 @@ This role can install, configure and start Postfix MTA.
 
 ```
 postfix_conf:
-  relayhost: "example.com"
+  relayhost: example.com
 ```
 
 This is a dictionary which can hold key/value pairs of all supported Postfix
@@ -68,8 +68,8 @@ Install and enable postfix. Configure `relay_domains=$mydestination` and
 - hosts: all
   vars:
     postfix_conf:
-      relay_domains: "$mydestination"
-      relayhost: "example.com"
+      relay_domains: $mydestination
+      relayhost: example.com
   roles:
     - linux-system-roles.postfix
 ```
@@ -94,7 +94,7 @@ rewritten) and configure `relayhost=example.com`:
 - hosts: all
   vars:
     postfix_conf:
-      relayhost: "example.com"
+      relayhost: example.com
     postfix_backup: true
   roles:
     - linux-system-roles.postfix
@@ -109,7 +109,7 @@ set to true `postfix_backup` is ignored):
 - hosts: all
   vars:
     postfix_conf:
-      relayhost: "example.com"
+      relayhost: example.com
     postfix_backup_multiple: true
   roles:
     - linux-system-roles.postfix

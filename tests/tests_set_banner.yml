@@ -3,7 +3,7 @@
 
   vars:
     postfix_conf:
-      smtpd_banner: "test"
+      smtpd_banner: test
   roles:
     - linux-system-roles.postfix
 
@@ -15,4 +15,6 @@
 
     - name: Assert smtpd banner is valid
       assert:
-        that: "{{ smtpd_banner.stdout_lines[0] == 'smtpd_banner = test' }}"
+        that: "{{
+          smtpd_banner.stdout_lines[0] ==
+          'smtpd_banner = ' + postfix_conf.smtpd_banner }}"

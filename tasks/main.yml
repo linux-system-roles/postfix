@@ -60,5 +60,7 @@
 
     - name: Configure Postfix
       command: postconf -e {{ item.key | quote }}={{ item.value | quote }}
-      notify: check restart postfix
+      notify:
+        - Check postfix
+        - Restart postfix
       with_dict: "{{ postfix_conf }}"
