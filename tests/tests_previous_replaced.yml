@@ -1,21 +1,21 @@
 ---
-- name: Test setting previous="replaced" with postfix_conf
+- name: Test setting previous=replaced with postfix_conf
   hosts: all
   tasks:
-    - name: Run the role with previous="replaced" only
+    - name: Run the role with previous=replaced only
       include_role:
         name: linux-system-roles.postfix
       vars:
         postfix_conf:
-          previous: "replaced"
+          previous: replaced
 
     - name: Run the role to configure relay_domains and relayhost
       include_role:
         name: linux-system-roles.postfix
       vars:
         postfix_conf:
-          relay_domains: "London"
-          relayhost: "example.com"
+          relay_domains: London
+          relayhost: example.com
 
     - name: Flush handlers
       meta: flush_handlers
@@ -25,8 +25,8 @@
         name: linux-system-roles.postfix
       vars:
         postfix_conf:
-          previous: "replaced"
-          relay_domains: "Liverpool"
+          previous: replaced
+          relay_domains: Liverpool city
 
     - name: Flush handlers
       meta: flush_handlers
@@ -39,5 +39,5 @@
       assert:
         that:
           - __postfix_explicit_config.stdout is search(
-            "relay_domains = Liverpool")
+            "relay_domains = Liverpool city")
           - __postfix_explicit_config.stdout is not search("relayhost")
