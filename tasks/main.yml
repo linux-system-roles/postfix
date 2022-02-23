@@ -59,11 +59,11 @@
 
     - name: Ensure ansible_managed header in configuration file
       vars:
-        __postfix_ansible_managed: "{{
+        __lsr_ansible_managed: "{{
           lookup('template', 'get_ansible_managed.j2') }}"
       blockinfile:
         path: /etc/postfix/main.cf
-        block: "{{ __postfix_ansible_managed }}"
+        block: "{{ __lsr_ansible_managed }}"
         insertbefore: BOF
 
     - name: Configure Postfix
