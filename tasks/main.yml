@@ -43,13 +43,13 @@
   command: postconf
   register: __postfix_register_config
   changed_when: false
-  when: postfix_conf | dict2items | rejectattr( 'key', 'match', "previous" )
+  when: postfix_conf | dict2items | rejectattr( 'key', 'match', '^previous$' )
     | list | items2dict | d({}) | length > 0
 
 - name: Check given config against current config
   changed_when: false
   when:
-    - postfix_conf | dict2items | rejectattr( 'key', 'match', "previous" )
+    - postfix_conf | dict2items | rejectattr( 'key', 'match', '^previous$' )
       | list | items2dict | d({}) | length > 0
     - __postfix_register_config is defined
     - __postfix_register_config.stdout_lines is defined
