@@ -1,7 +1,36 @@
 ---
+# Distribution defaults are different from the postfix defaults, hence need to
+# reinstall the package
+- name: Remove the {{ __postfix_packages }} package to restore config
+  when:
+    - postfix_conf.previous is defined
+    - postfix_conf.previous == "replaced"
+  block:
+    # It is assumed that the only package providing config files that might
+    # be modified is postfix - if this is not so, then additional
+    # packages need to be added to this check
+    - name: Get status of the {{ __postfix_packages }} package
+      command: rpm -V {{ item }}
+      loop: "{{ __postfix_packages }}"
+      register: __postfix_packages_status
+      failed_when: false
+      changed_when: false
+      args:
+        warn: false
+
+    - name: Remove the {{ __postfix_packages }} package to reset original confs
+      package:
+        name: "{{ __postfix_packages }}"
+        state: absent
+      register: __postfix_erased
+      when: __postfix_packages_status.results |
+        rejectattr('stdout', 'match', '^package .* is not installed') |
+        selectattr('stdout', 'search', ' /etc/postfix/.*[.]cf($|\n)') |
+        list | length > 0
+
 - name: Install Postfix
   package:
-    name: postfix
+    name: "{{ __postfix_packages }}"
     state: present
 
 - name: Enable Postfix
@@ -14,21 +43,25 @@
   command: postconf
   register: __postfix_register_config
   changed_when: false
-  when: postfix_conf | d({}) | length > 0
+  when: postfix_conf | dict2items | rejectattr( 'key', 'match', '^previous$' )
+    | list | items2dict | d({}) | length > 0
 
 - name: Check given config against current config
   changed_when: false
   when:
-    - postfix_conf | d({}) | length > 0
+    - postfix_conf | dict2items | rejectattr( 'key', 'match', '^previous$' )
+      | list | items2dict | d({}) | length > 0
     - __postfix_register_config is defined
     - __postfix_register_config.stdout_lines is defined
   set_fact:
     __postfix_has_config_changed: |-
       {% for key, val in postfix_conf.items() %}
-      {%   set space = ' ' if val else '' %}
-      {%   set itemstr = '{} ={}{}'.format(key, space, val) %}
-      {%   if itemstr not in __postfix_register_config.stdout_lines %}
+      {%   if key != 'previous' %}
+      {%     set space = ' ' if val else '' %}
+      {%     set itemstr = '{} ={}{}'.format(key, space, val) %}
+      {%     if itemstr not in __postfix_register_config.stdout_lines %}
       True itemstr {{ itemstr }} is not in __postfix_register_config
+      {%     endif %}
       {%   endif %}
       {% endfor %}
 
@@ -72,3 +105,7 @@
         - Check postfix
         - Restart postfix
       with_dict: "{{ postfix_conf }}"
+      when:
+        - item.key not in ['previous']
+        - __postfix_has_config_changed
+          | d("") is search("True itemstr " + item.key)
