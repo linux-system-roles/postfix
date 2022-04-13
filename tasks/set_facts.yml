@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+- name: Ensure ansible_facts used by role are present
+  setup:
+    gather_subset: min
+  when:
+    - __postfix_required_facts is defined
+    - not ansible_facts.keys() | list |
+      intersect(__postfix_required_facts) == __postfix_required_facts

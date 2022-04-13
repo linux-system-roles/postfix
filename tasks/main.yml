@@ -1,4 +1,7 @@
 ---
+- name: Ensure ansible_facts required by role
+  include_tasks: set_facts.yml
+
 # Distribution defaults are different from the postfix defaults, hence need to
 # reinstall the package
 - name: Remove the {{ __postfix_packages }} package to restore config
