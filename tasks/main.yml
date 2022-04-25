@@ -40,7 +40,7 @@
   service:
     name: postfix
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Get current config
   command: postconf
