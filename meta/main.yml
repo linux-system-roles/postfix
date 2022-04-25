@@ -1,7 +1,7 @@
 galaxy_info:
   author: Jaroslav Škarvada <jskarvad@redhat.com>
   description: Configure Postfix
-  galaxy_tags: [ 'system', 'beta' ]
+  galaxy_tags: [system, beta]
   company: Red Hat, Inc.
   license: GPL-3.0+
   min_ansible_version: 2.9
