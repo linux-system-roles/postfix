@@ -72,6 +72,33 @@ thus keeping multiple backup copies.  The default is `true`.  NOTE: This setting
 overrides `postfix_backup`, so you must set this to `false` if you want to use
 `postfix_backup`.
 
+### postfix_manage_firewall
+
+Boolean flag allowing to configure firewall using the firewall role.
+Manage the smtp related ports, 25/tcp, 465/tcp, and 587/tcp.
+If the variable is set to `false`, the `postfix role` does not manage the
+firewall.
+Default to `false`.
+
+NOTE: `postfix_manage_firewall` is limited to *adding* ports.
+It cannot be used for *removing* ports.
+If you want to remove ports, you will need to use the firewall system
+role directly.
+
+NOTE: the firewall management is not supported on RHEL 6.
+
+### postfix_manage_selinux
+
+Boolean flag allowing to configure selinux using the selinux role.
+Assign `smtp_port_t` to the smtp related ports.
+If the variable is set to false, the `postfix role` does not manage the
+selinux
+
+NOTE: `postfix_manage_selinux` is limited to *adding* policy.
+It cannot be used for *removing* policy.
+If you want to remove policy, you will need to use the selinux system
+role directly.
+
 ## Limitations
 
 There is no way to remove configuration parameters.  If you know all of the

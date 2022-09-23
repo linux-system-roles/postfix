@@ -5,20 +5,32 @@
     - name: Run the role with previous=replaced only
       include_role:
         name: linux-system-roles.postfix
+        public: true
       vars:
+        postfix_manage_firewall: true
+        postfix_manage_selinux: false
         postfix_conf:
           previous: replaced
+
+    - name: Check firewall and selinux status
+      include_tasks: check_firewall_selinux.yml
 
     - name: Run the role to configure relay_domains and relayhost
       include_role:
         name: linux-system-roles.postfix
+        public: true
       vars:
+        postfix_manage_firewall: true
+        postfix_manage_selinux: true
         postfix_conf:
           relay_domains: London
           relayhost: example.com
 
     - name: Flush handlers
       meta: flush_handlers
+
+    - name: Check firewall and selinux status
+      include_tasks: check_firewall_selinux.yml
 
     - name: Reset all settings and configure relay_domains
       include_role:

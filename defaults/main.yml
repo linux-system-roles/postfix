@@ -15,3 +15,11 @@ postfix_backup: false
 # Whether to do multiple backups with timestamp (if true) or
 # single backup (if false and postfix_backup == true)
 postfix_backup_multiple: true
+
+# If true, manage the smtp related ports, 25/tcp, 465/tcp, and
+# 587/tcp using the firewall role.
+postfix_manage_firewall: false
+
+# If true, manage the smtp related ports, 25/tcp, 465/tcp, and
+# 587/tcp using the selinux role.
+postfix_manage_selinux: false

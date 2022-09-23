@@ -31,6 +31,12 @@
         selectattr('stdout', 'search', ' /etc/postfix/.*[.]cf($|\n)') |
         list | length > 0
 
+- name: Configure firewall
+  include_tasks: firewall.yml
+
+- name: Configure selinux
+  include_tasks: selinux.yml
+
 - name: Install Postfix
   package:
     name: "{{ __postfix_packages }}"

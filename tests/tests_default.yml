@@ -1,5 +1,15 @@
 - name: Ensure that the rule runs with default parameters
   hosts: all
   gather_facts: false
-  roles:
-    - linux-system-roles.postfix
+
+  tasks:
+    - name: Run the postfix role
+      include_role:
+        name: linux-system-roles.postfix
+        public: true
+      vars:
+        postfix_manage_firewall: true
+        postfix_manage_selinux: true
+
+    - name: Check firewall and selinux status
+      include_tasks: check_firewall_selinux.yml

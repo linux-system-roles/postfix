@@ -4,10 +4,15 @@
   vars:
     postfix_conf:
       smtpd_banner: test
-  roles:
-    - linux-system-roles.postfix
+    postfix_manage_firewall: false
+    postfix_manage_selinux: true
 
   tasks:
+    - name: Run the role with test smtpd_banner
+      include_role:
+        name: linux-system-roles.postfix
+        public: true
+
     - name: Get smtpd banner
       command: postconf smtpd_banner
       register: smtpd_banner
@@ -18,3 +23,6 @@
         that: "{{
           smtpd_banner.stdout_lines[0] ==
           'smtpd_banner = ' + postfix_conf.smtpd_banner }}"
+
+    - name: Check firewall and selinux status
+      include_tasks: check_firewall_selinux.yml

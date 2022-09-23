@@ -2,5 +2,7 @@
 # List of default rpm packages to install.
 __postfix_packages: ['postfix']
 
-# currently unused
-# __postfix_required_facts
+# ansible_facts required by the role
+__postfix_required_facts:
+  - distribution_version
+  - os_family
