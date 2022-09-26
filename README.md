@@ -3,6 +3,23 @@
 
 This role can install, configure and start Postfix MTA.
 
+## Requirements
+
+The role requires the `firewall` role and the `selinux` role from the
+`fedora.linux_system_roles` collection, if `postfix_manage_firewall`
+and `postfix_manage_selinux` is set to true, respectively.
+(Please see also [`postfix_manage_firewall`](#postfix_manage_firewall)
+ and [`postfix_manage_selinux`](#postfix_manage_selinux))
+
+If the `postfix` is a role from the `fedora.linux_system_roles`
+collection or from the Fedora RPM package, the requirement is already
+satisfied.
+
+Otherwise, please run the following command line to install the collection.
+```
+ansible-galaxy collection install -r meta/collection-requirements.yml
+```
+
 # Role Variables
 
 ### postfix_conf
