@@ -3,6 +3,23 @@
 
 This role can install, configure and start Postfix MTA.
 
+## Requirements
+
+The role requires the `firewall` role and the `selinux` role from the
+`fedora.linux_system_roles` collection, if `postfix_manage_firewall`
+and `postfix_manage_selinux` is set to true, respectively.
+(Please see also [`postfix_manage_firewall`](#postfix_manage_firewall)
+ and [`postfix_manage_selinux`](#postfix_manage_selinux))
+
+If the `postfix` is a role from the `fedora.linux_system_roles`
+collection or from the Fedora RPM package, the requirement is already
+satisfied.
+
+Otherwise, please run the following command line to install the collection.
+```
+ansible-galaxy collection install -r meta/collection-requirements.yml
+```
+
 # Role Variables
 
 ### postfix_conf
@@ -71,6 +88,33 @@ the configuration - for example,
 thus keeping multiple backup copies.  The default is `true`.  NOTE: This setting
 overrides `postfix_backup`, so you must set this to `false` if you want to use
 `postfix_backup`.
+
+### postfix_manage_firewall
+
+Boolean flag allowing to configure firewall using the firewall role.
+Manage the smtp related ports, 25/tcp, 465/tcp, and 587/tcp.
+If the variable is set to `false`, the `postfix role` does not manage the
+firewall.
+Default to `false`.
+
+NOTE: `postfix_manage_firewall` is limited to *adding* ports.
+It cannot be used for *removing* ports.
+If you want to remove ports, you will need to use the firewall system
+role directly.
+
+NOTE: the firewall management is not supported on RHEL 6.
+
+### postfix_manage_selinux
+
+Boolean flag allowing to configure selinux using the selinux role.
+Assign `smtp_port_t` to the smtp related ports.
+If the variable is set to false, the `postfix role` does not manage the
+selinux
+
+NOTE: `postfix_manage_selinux` is limited to *adding* policy.
+It cannot be used for *removing* policy.
+If you want to remove policy, you will need to use the selinux system
+role directly.
 
 ## Limitations
 
