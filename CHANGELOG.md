@@ -1,6 +1,35 @@
 Changelog
 =========
 
+[1.3.0] - 2022-11-01
+--------------------
+
+### New Features
+
+- Use the firewall role and the selinux role from the postfix role (#56)
+
+- Introduce postfix_manage_firewall to use the firewall role to
+  manage the smtp services.
+  Default to false - means the firewall role is not used.
+
+- Introduce postfix_manage_selinux to use the selinux role to
+  manage the ports in the smtp services.
+  Assign smtp_port_t to the smtp service ports.
+  Default to false - means the selinux role is not used.
+
+- Add the test check task tasks/check_firewall_selinux.yml for
+  verify the ports status.
+
+- Add meta/collection-requirements.yml.
+
+### Bug Fixes
+
+- none
+
+### Other Changes
+
+- none
+
 [1.2.4] - 2022-07-19
 --------------------
 
