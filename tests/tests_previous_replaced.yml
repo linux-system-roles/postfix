@@ -46,6 +46,7 @@
     - name: Print postfix settings that have explicit value set
       command: postconf -n
       register: __postfix_explicit_config
+      changed_when: false
 
     - name: Verify that relayhost is unset and relay_domains is set
       assert:

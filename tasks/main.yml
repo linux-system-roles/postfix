@@ -4,7 +4,7 @@
 
 # Distribution defaults are different from the postfix defaults, hence need to
 # reinstall the package
-- name: Remove the {{ __postfix_packages }} package to restore config
+- name: Remove postfix package(s) to restore config {{ __postfix_packages }}
   when:
     - postfix_conf.previous is defined
     - postfix_conf.previous == "replaced"
@@ -12,16 +12,14 @@
     # It is assumed that the only package providing config files that might
     # be modified is postfix - if this is not so, then additional
     # packages need to be added to this check
-    - name: Get status of the {{ __postfix_packages }} package
-      command: rpm -V {{ item }}
+    - name: Get status of package(s) {{ __postfix_packages }}
+      command: rpm -V {{ item }}  # noqa command-instead-of-module
       loop: "{{ __postfix_packages }}"
       register: __postfix_packages_status
       failed_when: false
       changed_when: false
-      args:
-        warn: false
 
-    - name: Remove the {{ __postfix_packages }} package to reset original confs
+    - name: Remove package(s) to reset original confs {{ __postfix_packages }}
       package:
         name: "{{ __postfix_packages }}"
         state: absent

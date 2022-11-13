@@ -1,7 +1,14 @@
 # SPDX-License-Identifier: MIT
 ---
-- block:
-    - block:
+- name: Manage SELinux for postfix ports
+  when: postfix_manage_selinux | bool
+  block:
+    - name: Manage firewall for postfix ports
+      when:
+        - postfix_manage_firewall | bool
+        - ansible_facts['os_family'] == 'RedHat'
+        - ansible_facts['distribution_version'] is version('7', '>=')
+      block:
         - name: Get the smtp related tcp service ports
           shell: |-
             set -euo pipefail
@@ -29,11 +36,6 @@
             - _pair | length > 0
           loop: "{{ __ports.results }}"
 
-      when:
-        - postfix_manage_firewall | bool
-        - ansible_facts['os_family'] == 'RedHat'
-        - ansible_facts['distribution_version'] is version('7', '>=')
-
     - name: "Set hardcoded ports to _postfix_selinux for
              no firewall or rhel-6 or not redhat"
       set_fact:
@@ -54,5 +56,3 @@
         name: fedora.linux_system_roles.selinux
       vars:
         selinux_ports: "{{ _postfix_selinux }}"
-  when:
-    - postfix_manage_selinux | bool
