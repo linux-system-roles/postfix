@@ -39,8 +39,8 @@ clean postfix installation.
 
 **WARNING**: If you specify `previous: replaced`, the role reinstalls the postfix
 package and replaces the existing `/etc/postfix/main.cf` and
-`/etc/postix/master.cf` files. Ensure to back up those files to preserve your
-settings.
+`/etc/postfix/master.cf` files. <!--- wokeignore:rule=master -->
+Ensure to back up those files to preserve your settings.
 
 If you specify only `previous: replaced` under the `postfix_conf` dictionary,
 the role re-installs the `postfix` package and enables the `postfix` service
