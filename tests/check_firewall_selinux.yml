@@ -1,7 +1,12 @@
 # SPDX-License-Identifier: MIT
 ---
 # Assume firewalld and selinux are not manually configured.
-- block:
+- name: Manage firewall
+  when:
+    - postfix_manage_firewall | bool
+    - ansible_facts['os_family'] == 'RedHat'
+    - ansible_facts['distribution_version'] is version('7', '>=')
+  block:
     - name: Get the firewall services
       shell: |-
         set -euo pipefail
@@ -18,12 +23,10 @@
         - "smtp"
         - "smtps"
         - "smtp-submission"
-  when:
-    - postfix_manage_firewall | bool
-    - ansible_facts['os_family'] == 'RedHat'
-    - ansible_facts['distribution_version'] is version('7', '>=')
 
-- block:
+- name: Manage SELinux
+  when: postfix_manage_selinux | bool
+  block:
     - name: Ensure smtp ports are retrieved
       assert:
         that: "{{ _postfix_selinux | length > 0 }}"
@@ -35,5 +38,3 @@
           grep "{{ item['proto'] }}" | grep "{{ item['ports'] }}"
       changed_when: false
       loop: "{{ _postfix_selinux }}"
-  when:
-    - postfix_manage_selinux | bool
