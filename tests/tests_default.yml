@@ -1,7 +1,7 @@
+---
 - name: Ensure that the rule runs with default parameters
   hosts: all
   gather_facts: false
-
   tasks:
     - name: Run the postfix role
       include_role:
