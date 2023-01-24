@@ -1,6 +1,21 @@
 Changelog
 =========
 
+[1.3.3] - 2023-01-23
+--------------------
+
+### New Features
+
+- none
+
+### Bug Fixes
+
+- fix issues with jinja, ansible-lint (#70)
+
+### Other Changes
+
+- none
+
 [1.3.2] - 2023-01-20
 --------------------
 
