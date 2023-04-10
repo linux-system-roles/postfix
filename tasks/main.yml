@@ -82,6 +82,7 @@
         /etc/postfix/main.cf.{{ postfix_backup_multiple |
         ternary("$(date -Iseconds)", "backup") }}
       when: postfix_backup or postfix_backup_multiple
+      changed_when: true
 
     - name: Ensure Last modified header is absent
       lineinfile:
@@ -113,6 +114,10 @@
         - Restart postfix
       with_dict: "{{ postfix_conf }}"
       when:
+        - item.key not in ['previous']
+        - __postfix_has_config_changed
+          | d("") is search("True itemstr " ~ item.key)
+      changed_when:
         - item.key not in ['previous']
         - __postfix_has_config_changed
           | d("") is search("True itemstr " ~ item.key)

@@ -2,6 +2,7 @@
 - name: Check postfix
   command: postfix check
   when: postfix_check
+  changed_when: false
 
 - name: Restart postfix
   service:
