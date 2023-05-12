@@ -1,9 +1,14 @@
 # postfix
+
 ![CI Testing](https://github.com/linux-system-roles/posffix/workflows/tox/badge.svg)
 
 This role can install, configure and start Postfix MTA.
 
 ## Requirements
+
+See below
+
+### Collection requirements
 
 The role requires the `firewall` role and the `selinux` role from the
 `fedora.linux_system_roles` collection, if `postfix_manage_firewall`
@@ -16,15 +21,16 @@ collection or from the Fedora RPM package, the requirement is already
 satisfied.
 
 Otherwise, please run the following command line to install the collection.
+
 ```
 ansible-galaxy collection install -r meta/collection-requirements.yml
 ```
 
-# Role Variables
+## Role Variables
 
 ### postfix_conf
 
-```
+```yaml
 postfix_conf:
   relayhost: example.com
 ```
@@ -48,7 +54,7 @@ without applying any configuration.
 
 Example of settings `previous: replaced`:
 
-```
+```yaml
 postfix_conf:
   previous: replaced
   relayhost: example.com
@@ -56,7 +62,7 @@ postfix_conf:
 
 ### postfix_check
 
-```
+```yaml
 postfix_check: false
 ```
 
@@ -65,7 +71,7 @@ Postfix if the configuration has changed.  The default is `true`.
 
 ### postfix_backup
 
-```
+```yaml
 postfix_backup: true
 ```
 
@@ -78,7 +84,7 @@ false` - see below.
 
 ### postfix_backup_multiple
 
-```
+```yaml
 postfix_backup_multiple: false
 ```
 
@@ -130,7 +136,8 @@ Install and enable postfix. Configure `relay_domains=$mydestination` and
 
 ```yaml
 ---
-- hosts: all
+- name: Manage postfix
+  hosts: all
   vars:
     postfix_conf:
       relay_domains: $mydestination
@@ -144,7 +151,8 @@ postfix:
 
 ```yaml
 ---
-- hosts: all
+- name: Manage postfix with no check
+  hosts: all
   vars:
     postfix_check: false
   roles:
@@ -156,7 +164,8 @@ rewritten) and configure `relayhost=example.com`:
 
 ```yaml
 ---
-- hosts: all
+- name: Manage postfix with relayhost
+  hosts: all
   vars:
     postfix_conf:
       relayhost: example.com
@@ -171,7 +180,8 @@ set to true `postfix_backup` is ignored):
 
 ```yaml
 ---
-- hosts: all
+- name: Manage postfix with multiple backups
+  hosts: all
   vars:
     postfix_conf:
       relayhost: example.com
