@@ -52,7 +52,8 @@ If you specify only `previous: replaced` under the `postfix_conf` dictionary,
 the role re-installs the `postfix` package and enables the `postfix` service
 without applying any configuration.
 
-Example of settings `previous: replaced`:
+For example, to remove existing configuration and set `relayhost: example.com`
+on top of clean postfix installation, use `postfix_conf` like this:
 
 ```yaml
 postfix_conf:
@@ -124,10 +125,10 @@ role directly.
 
 ## Limitations
 
-There is no way to remove configuration parameters.  If you know all of the
-configuration parameters that you want to set, you can use the `file` module to
-remove `/etc/postfix/main.cf` before running this role, with `postfix_conf` set
-to all of the configuration parameters you want to apply.
+There is no way to remove separate configuration parameters.
+As a workaround, you can use `postfix_conf`'s `previous: replaced` to remove the existing configuration and then apply
+the desired configuration on top of clean postfix installation.
+For more information, see [`postfix_conf`](#postfix_conf).
 
 ## Example Playbook
 
