@@ -1,6 +1,6 @@
 # postfix
 
-![CI Testing](https://github.com/linux-system-roles/posffix/workflows/tox/badge.svg)
+![CI Testing](https://github.com/linux-system-roles/postfix/workflows/tox/badge.svg)
 
 This role can install, configure and start Postfix MTA.
 
