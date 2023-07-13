@@ -2,8 +2,6 @@
 ---
 - name: Ensure ansible_facts used by role are present
   setup:
-    gather_subset: min
-  when:
-    - __postfix_required_facts is defined
-    - not ansible_facts.keys() | list |
-      intersect(__postfix_required_facts) == __postfix_required_facts
+    gather_subset: "{{ __postfix_required_facts_subsets }}"
+  when: __postfix_required_facts |
+    difference(ansible_facts.keys() | list) | length > 0
