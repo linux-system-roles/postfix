@@ -22,7 +22,7 @@ satisfied.
 
 Otherwise, please run the following command line to install the collection.
 
-```
+```bash
 ansible-galaxy collection install -r meta/collection-requirements.yml
 ```
 
