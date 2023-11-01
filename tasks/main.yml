@@ -8,6 +8,7 @@
   when:
     - postfix_conf.previous is defined
     - postfix_conf.previous == "replaced"
+    - ansible_facts.pkg_mgr | d() != "ansible.posix.rhel_rpm_ostree"
   block:
     # It is assumed that the only package providing config files that might
     # be modified is postfix - if this is not so, then additional
@@ -28,6 +29,33 @@
         rejectattr('stdout', 'match', '^package .* is not installed') |
         selectattr('stdout', 'search', ' /etc/postfix/.*[.]cf($|\n)') |
         list | length > 0
+
+- name: Remove configuration for replacement
+  when:
+    - postfix_conf.previous | d() == "replaced"
+    - ansible_facts.pkg_mgr | d() == "ansible.posix.rhel_rpm_ostree"
+  block:
+    # It is assumed that the only package providing config files that might
+    # be modified is postfix - if this is not so, then additional
+    # packages need to be added to this check
+    - name: Get status of config files
+      command: rpm -V --nomtime {{ item }}  # noqa command-instead-of-module
+      loop: "{{ __postfix_packages }}"
+      register: __postfix_packages_status
+      failed_when: false
+      changed_when: false
+
+    - name: Remove config files - make empty
+      copy:
+        dest: "{{ item }}"
+        content: "\n"  # to make postconf -e happy
+        mode: preserve
+      loop: "{{ mod_cf_files }}"
+      vars:
+        mod_cf_files: "{{ __postfix_packages_status.results |
+          map(attribute='stdout') | map('default', '') |
+          map('regex_findall', ' (/etc/postfix/.*[.]cf)(?:$|\n)') | select |
+          flatten | list }}"
 
 - name: Configure firewall
   include_tasks: firewall.yml
