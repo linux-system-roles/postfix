@@ -157,6 +157,7 @@ id="toc-postfix_manage_selinux">postfix_manage_selinux</a></li>
 <li><a href="#limitations" id="toc-limitations">Limitations</a></li>
 <li><a href="#example-playbook" id="toc-example-playbook">Example
 Playbook</a></li>
+<li><a href="#rpm-ostree" id="toc-rpm-ostree">rpm-ostree</a></li>
 <li><a href="#license" id="toc-license">License</a></li>
 </ul>
 </nav>
@@ -177,8 +178,10 @@ href="#postfix_manage_selinux"><code>postfix_manage_selinux</code></a>)</p>
 <p>If the <code>postfix</code> is a role from the
 <code>fedora.linux_system_roles</code> collection or from the Fedora RPM
 package, the requirement is already satisfied.</p>
-<p>Otherwise, please run the following command line to install the
-collection.</p>
+<p>The role requires additional collections to manage
+<code>rpm-ostree</code> systems. If you need to manage
+<code>rpm-ostree</code> systems, run the below command to install the
+collections.</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-galaxy</span> collection install <span class="at">-r</span> meta/collection-requirements.yml</span></code></pre></div>
 <h1 id="role-variables">Role Variables</h1>
@@ -199,6 +202,10 @@ and replaces the existing <code>/etc/postfix/main.cf</code> and
 <code>/etc/postfix/master.cf</code> files.
 <!--- wokeignore:rule=master --> Ensure to back up those files to
 preserve your settings.</p>
+<p><strong>WARNING</strong>: When managing <code>rpm-ostree</code>
+systems, the role cannot reinstall the postfix package, so it just
+replaces the modified config files with empty files. This is not
+idempotent.</p>
 <p>If you specify only <code>previous: replaced</code> under the
 <code>postfix_conf</code> dictionary, the role re-installs the
 <code>postfix</code> package and enables the <code>postfix</code>
@@ -312,6 +319,8 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href=
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">postfix_backup_multiple</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">roles</span><span class="kw">:</span></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> linux-system-roles.postfix</span></span></code></pre></div>
+<h1 id="rpm-ostree">rpm-ostree</h1>
+<p>See README-ostree.md</p>
 <h1 id="license">License</h1>
 <p>Copyright (C) 2017 Jaroslav Škarvada <a
 href="mailto:jskarvad@redhat.com">jskarvad@redhat.com</a></p>
