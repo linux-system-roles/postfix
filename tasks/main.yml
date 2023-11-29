@@ -8,7 +8,7 @@
   when:
     - postfix_conf.previous is defined
     - postfix_conf.previous == "replaced"
-    - ansible_facts.pkg_mgr | d() != "ansible.posix.rhel_rpm_ostree"
+    - not __postfix_is_ostree
   block:
     # It is assumed that the only package providing config files that might
     # be modified is postfix - if this is not so, then additional
@@ -33,7 +33,7 @@
 - name: Remove configuration for replacement
   when:
     - postfix_conf.previous | d() == "replaced"
-    - ansible_facts.pkg_mgr | d() == "ansible.posix.rhel_rpm_ostree"
+    - __postfix_is_ostree | d(false)
   block:
     # It is assumed that the only package providing config files that might
     # be modified is postfix - if this is not so, then additional
@@ -67,6 +67,8 @@
   package:
     name: "{{ __postfix_packages }}"
     state: present
+    use: "{{ (__postfix_is_ostree | d(false)) |
+             ternary('ansible.posix.rhel_rpm_ostree', omit) }}"
 
 - name: Enable Postfix
   service:
