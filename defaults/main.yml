@@ -6,6 +6,15 @@
 #
 postfix_conf: {}
 
+# Additional config maps/files, e.g.:
+# postfix_files:
+#   - name: 'sasl_passwd'
+#     content: 'smtp.example.com user@example.com:myFirstPassword
+#     postmap: true
+#   - name: 'sender_canonical_maps'
+#     content: '/.+/    user@example.com'
+postfix_files: []
+
 # Whether to run 'postfix check' before it's started
 postfix_check: true
 
