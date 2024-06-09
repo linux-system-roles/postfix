@@ -111,6 +111,8 @@
         cp /etc/postfix/main.cf
         /etc/postfix/main.cf.{{ postfix_backup_multiple |
         ternary("$(date -Iseconds)", "backup") }}
+      args:
+        executable: /bin/bash
       when: postfix_backup or postfix_backup_multiple
       changed_when: true
 
