@@ -17,3 +17,14 @@
     - name: Set flag to indicate system is ostree
       set_fact:
         __postfix_is_ostree: "{{ __ostree_booted_stat.stat.exists }}"
+
+- name: Set platform/version specific variables
+  include_vars: "{{ __postfix_vars_file }}"
+  loop:
+    - "{{ ansible_os_family }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_distribution }}_{{ ansible_distribution_version }}.yml"
+  vars:
+    __postfix_vars_file: "{{ role_path }}/vars/{{ item }}"
+  when: __postfix_vars_file is file
