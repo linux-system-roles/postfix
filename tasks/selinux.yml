@@ -13,13 +13,10 @@
           shell: |-
             set -euo pipefail
             firewall-cmd --info-service="{{ item }}" | \
-              egrep " +ports: +" | sed -e "s/ *ports: //"
+              grep -E " +ports: +" | sed -e "s/ *ports: //"
           register: __ports
           changed_when: false
-          loop:
-            - "smtp"
-            - "smtps"
-            - "smtp-submission"
+          loop: "{{ __postfix_smtp_services }}"
 
         - name: Initialize _postfix_selinux
           set_fact:
