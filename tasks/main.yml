@@ -117,7 +117,7 @@
         src: /etc/postfix/main.cf
         dest: /etc/postfix/main.cf.{{ postfix_backup_multiple |
           ternary(ansible_date_time.iso8601, "backup") }}
-        mode: '0644'
+        mode: "0644"
       when: postfix_backup or postfix_backup_multiple
 
     - name: Ensure Last modified header is absent
