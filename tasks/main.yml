@@ -108,7 +108,7 @@
     - name: Gather facts for ansible_date_time
       setup:
         filter:
-          - 'ansible_date_time'
+          - ansible_date_time
       when: postfix_backup_multiple | bool
 
     - name: Backup configuration
