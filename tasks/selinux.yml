@@ -12,8 +12,20 @@
         - name: Get the smtp related tcp service ports
           shell: |-
             set -euo pipefail
-            firewall-cmd --info-service="{{ item }}" | \
-              grep -E " +ports: +" | sed -e "s/ *ports: //"
+            ports="$(firewall-cmd --info-service="{{ item }}" | \
+              grep -E " +ports: +" | sed -e "s/ *ports: //")" || :
+            if [ -z "$ports" ]; then
+              include="$(firewall-cmd --info-service="{{ item }}" | \
+                awk '/^ +includes:/ {print $2}')" || :
+              if [ -n "$include" ]; then
+                ports="$(firewall-cmd --info-service="$include" | \
+                  grep -E " +ports: +" | sed -e "s/ *ports: //")"
+              fi
+            fi
+            if [ -z "$ports" ]; then
+              exit 1
+            fi
+            echo "$ports"
           register: __ports
           changed_when: false
           loop: "{{ __postfix_smtp_services }}"
