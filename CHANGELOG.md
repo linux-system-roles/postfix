@@ -1,6 +1,20 @@
 Changelog
 =========
 
+[1.4.5] - 2024-06-11
+--------------------
+
+### Bug Fixes
+
+- fix: Reflect smtp-submission service rename in EL 10 and Fedora 40+ (#131)
+
+### Other Changes
+
+- refactor: Modify backup task to use the 'copy' module instead of 'shell' (#2)
+- ci: use tox-lsr 3.3.0 which uses ansible-test 2.17 (#124)
+- ci: tox-lsr 3.4.0 - fix py27 tests; move other checks to py310 (#126)
+- ci: Add supported_ansible_also to .ansible-lint (#127)
+
 [1.4.4] - 2024-04-04
 --------------------
 

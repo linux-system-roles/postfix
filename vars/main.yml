@@ -1,7 +1,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 ---
 # List of default rpm packages to install.
-__postfix_packages: ['postfix']
+__postfix_packages:
+  - postfix
+
+__postfix_smtp_services:
+  - smtp
+  - smtps
+  - smtp-submission
 
 # ansible_facts required by the role
 __postfix_required_facts:
