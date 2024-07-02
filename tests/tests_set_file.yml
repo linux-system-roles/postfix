@@ -1,0 +1,33 @@
+---
+- name: Create a postmapped file
+  hosts: all
+
+  vars:
+    postfix_files:
+      - name: test
+        content: test
+        postmap: true
+
+  tasks:
+    - name: Run the role with test postmap file
+      include_role:
+        name: linux-system-roles.postfix
+        public: true
+
+    - name: Check if postmap file exists
+      stat:
+        path: /etc/postfix/test.db
+      register: test_file
+      changed_when: false
+
+    - name: Assert file is present
+      assert:
+        that: test_file.stat.exists
+
+    - name: Clean up test files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/postfix/test
+        - /etc/postfix/test.db

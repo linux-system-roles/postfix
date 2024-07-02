@@ -67,6 +67,21 @@ postfix_conf:
   relayhost: example.com
 ```
 
+### postfix_files
+
+```yaml
+postfix_files:
+  - name: sasl_passwd
+    content: example.com user:password
+    postmap: true
+  - name: sender_canonical_maps
+    content: /.+/  info@example.com
+```
+
+This is a list of files that will be placed in /etc/postfix and that can be converted into Postfix Lookup Tables if needed.
+
+It's meant as a simple mechanism to configure things such as SASL credentials and other small snippets.
+
 ### postfix_check
 
 ```yaml

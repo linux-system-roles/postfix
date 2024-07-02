@@ -102,6 +102,33 @@
       {%   endif %}
       {% endfor %}
 
+- name: Configure additional files
+  copy:
+    content: "{{ file['content'] }}"
+    dest: /etc/postfix/{{ file['name'] }}
+    owner: root
+    group: root
+    mode: '0640'
+  loop: "{{ postfix_files }}"
+  register: __postfix_postmap_files
+  no_log: true
+  loop_control:
+    loop_var: file
+  notify:
+    - Check postfix
+    - Restart postfix
+
+- name: Postmap files
+  command: postmap {{ result["dest"] | quote }}
+  when:
+    - result["changed"]
+    - result["file"]["postmap"] | d(false)
+  no_log: true
+  changed_when: true
+  loop: "{{ __postfix_postmap_files['results'] }}"
+  loop_control:
+    loop_var: result
+
 - name: Apply changes
   when: __postfix_has_config_changed | d("") is search("True")
   block:
