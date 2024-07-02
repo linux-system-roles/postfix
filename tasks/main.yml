@@ -119,15 +119,15 @@
     - Restart postfix
 
 - name: Postmap files
-  command: postmap /etc/postfix/{{ file['name'] }}
+  command: postmap {{ result["dest"] | quote }}
   when:
-    - file['changed'] | bool
-    - file['file']['postmap'] is defined
-    - file['file']['postmap'] | bool
+    - result["changed"]
+    - result["file"]["postmap"] | d(false)
   no_log: true
+  changed_when: true
   loop: "{{ __postfix_postmap_files['results'] }}"
   loop_control:
-    loop_var: file
+    loop_var: result
 
 - name: Apply changes
   when: __postfix_has_config_changed | d("") is search("True")
