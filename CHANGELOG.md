@@ -1,6 +1,21 @@
 Changelog
 =========
 
+[1.5.0] - 2024-07-15
+--------------------
+
+### New Features
+
+- feat: Added postfix_files feature as a simple means to add extra files/maps to config (#129)
+
+### Bug Fixes
+
+- fix: add support for EL10 (#134)
+
+### Other Changes
+
+- ci: ansible-lint action now requires absolute directory (#133)
+
 [1.4.5] - 2024-06-11
 --------------------
 
