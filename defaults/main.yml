@@ -13,6 +13,7 @@ postfix_conf: {}
 #     postmap: true
 #   - name: 'sender_canonical_maps'
 #     content: '/.+/    user@example.com'
+# See postfix_map_type to use a non-default map type
 postfix_files: []
 
 # Whether to run 'postfix check' before it's started
@@ -32,3 +33,8 @@ postfix_manage_firewall: false
 # If true, manage the smtp related ports, 25/tcp, 465/tcp, and
 # 587/tcp using the selinux role.
 postfix_manage_selinux: false
+
+# Map type to use.  See postconf -m for a list of
+# map types.  It is recommended not to set this and
+# to use the platform default.
+postfix_map_type: "{{ __postfix_default_map_type }}"

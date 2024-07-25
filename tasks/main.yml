@@ -119,7 +119,7 @@
     - Restart postfix
 
 - name: Postmap files
-  command: postmap {{ result["dest"] | quote }}
+  command: postmap {{ __map_type ~ result["dest"] | quote }}
   when:
     - result["changed"]
     - result["file"]["postmap"] | d(false)
@@ -128,6 +128,10 @@
   loop: "{{ __postfix_postmap_files['results'] }}"
   loop_control:
     loop_var: result
+  vars:
+    __map_type: "{{ postfix_map_type ~ ':'
+      if postfix_map_type | length > 0
+      else '' }}"
 
 - name: Apply changes
   when: __postfix_has_config_changed | d("") is search("True")

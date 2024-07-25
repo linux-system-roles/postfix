@@ -5,7 +5,7 @@
   vars:
     postfix_files:
       - name: test
-        content: test
+        content: test_key test_value
         postmap: true
 
   tasks:
@@ -14,9 +14,15 @@
         name: linux-system-roles.postfix
         public: true
 
+    - name: Set postmap result file name
+      set_fact:
+        __postmap_file: /etc/postfix/test.{{
+          postfix_map_type if postfix_map_type | length > 0
+          else 'db' }}
+
     - name: Check if postmap file exists
       stat:
-        path: /etc/postfix/test.db
+        path: "{{ __postmap_file }}"
       register: test_file
       changed_when: false
 
@@ -30,4 +36,4 @@
         state: absent
       loop:
         - /etc/postfix/test
-        - /etc/postfix/test.db
+        - "{{ __postmap_file }}"

@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 ---
+__postfix_default_map_type: "lmdb"
+
 __postfix_smtp_services:
   - smtp
   - smtps

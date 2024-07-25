@@ -9,6 +9,11 @@ __postfix_smtp_services:
   - smtps
   - smtp-submission
 
+# map type for postmap 'type:/path'
+# e.g. hash:/etc/postmap/mymap
+# default is "" - empty - use postmap default
+__postfix_default_map_type: ""
+
 # ansible_facts required by the role
 __postfix_required_facts:
   - distribution_version

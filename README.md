@@ -144,6 +144,12 @@ It cannot be used for *removing* policy.
 If you want to remove policy, you will need to use the selinux system
 role directly.
 
+### postfix_map_type
+
+String - this is the map type to use with `postfix_files` for the `postmap`
+command.  It is not recommended to use this - instead, let the role use the
+platform default.
+
 ## Limitations
 
 There is no way to remove separate configuration parameters.
