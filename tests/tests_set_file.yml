@@ -16,9 +16,14 @@
 
     - name: Check if postmap file exists
       stat:
-        path: /etc/postfix/test.db
+        path: /etc/postfix/test{{ __test_file_suffix }}
       register: test_file
       changed_when: false
+      vars:
+        __test_file_suffix: "{{ '.lmdb' if ansible_facts['os_family'] == 'RedHat'
+          and ansible_facts['distribution'] != 'Fedora'
+          and ansible_facts['distribution_major_version'] is version('10', '>=')
+          else '.db' }}"
 
     - name: Assert file is present
       assert:
