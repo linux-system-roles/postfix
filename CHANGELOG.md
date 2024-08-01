@@ -1,6 +1,17 @@
 Changelog
 =========
 
+[1.5.1] - 2024-08-01
+--------------------
+
+### Other Changes
+
+- ci: Add tft plan and workflow (#136)
+- ci: Update fmf plan to add a separate job to prepare managed nodes (#139)
+- test: el10 now uses lmdb by default (#140)
+- ci: Bump sclorg/testing-farm-as-github-action from 2 to 3 (#141)
+- ci: Add workflow for ci_test bad, use remote fmf plan (#142)
+
 [1.5.0] - 2024-07-15
 --------------------
 
