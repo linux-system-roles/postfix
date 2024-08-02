@@ -21,7 +21,7 @@ jobs:
     if: |
       github.event.issue.pull_request
       && contains(github.event.comment.body, '[citest]')
-      && (contains(github.event.comment.author_association, fromJson('["OWNER", "MEMBER", "COLLABORATOR", "CONTRIBUTOR"]'))
+      && (contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR", "CONTRIBUTOR"]'), github.event.comment.author_association)
       || contains('systemroller', github.event.comment.user.login))
     runs-on: ubuntu-latest
     outputs:
