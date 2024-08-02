@@ -29,11 +29,15 @@ jobs:
             | jq -r "[.workflow_runs[] | select( .display_title == \"$PR_TITLE\") | \
             select(.status == \"pending\" or .status == \"queued\" or .status == \"in_progress\") | .id][0]")
           # if pending run don't exist, take the last run with failure state
-          if [ "$PENDING_RUN" = "null" ]; then
-            RUN_ID=$(gh api "repos/$REPO/actions/workflows/tft.yml/runs?event=issue_comment" \
-              | jq -r "[.workflow_runs[] | select( .display_title == \"$PR_TITLE\" ) | select( .conclusion == \"failure\" ) | .id][0]")
-            echo "Re-running workflow $RUN_ID"
-            gh api --method POST repos/$REPO/actions/runs/$RUN_ID/rerun-failed-jobs
-          else
+          if [ "$PENDING_RUN" != "null" ]; then
             echo "The workflow $PENDING_RUN is still running, wait for it to finish to re-run"
+            exit 1
           fi
+          RUN_ID=$(gh api "repos/$REPO/actions/workflows/tft.yml/runs?event=issue_comment" \
+            | jq -r "[.workflow_runs[] | select( .display_title == \"$PR_TITLE\" ) | select( .conclusion == \"failure\" ) | .id][0]")
+          if [ "$RUN_ID" = "null" ]; then
+            echo "Failed workflow not found, exitting"
+            exit 1
+          fi
+          echo "Re-running workflow $RUN_ID"
+          gh api --method POST repos/$REPO/actions/runs/$RUN_ID/rerun-failed-jobs
