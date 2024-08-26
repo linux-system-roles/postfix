@@ -1,9 +1,11 @@
 ---
-name: Run integration tests in Testing Farm
+name: Run integration tests in Testing Farm on PR
 on:
-  issue_comment:
+  pull_request:
     types:
-      - created
+      - opened
+      - synchronize
+      - reopened
 permissions:
   contents: read
   # This is required for the ability to create/update the Pull request status
@@ -16,13 +18,6 @@ jobs:
       # group name contains reponame-pr_num to allow simualteneous runs in different PRs
       group: testing-farm-${{ github.event.repository.name }}-${{ github.event.issue.number }}
       cancel-in-progress: true
-    # Let's schedule tests only on user request. NOT automatically.
-    # Only repository owner or member can schedule tests
-    if: |
-      github.event.issue.pull_request
-      && contains(github.event.comment.body, '[citest]')
-      && (contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR", "CONTRIBUTOR"]'), github.event.comment.author_association)
-      || contains('systemroller', github.event.comment.user.login))
     runs-on: ubuntu-latest
     outputs:
       supported_platforms: ${{ steps.supported_platforms.outputs.supported_platforms }}
@@ -34,6 +29,23 @@ jobs:
         shell: bash
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
+
+      - name: Get User Permission
+        id: checkAccess
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check User Permission
+        if: steps.checkAccess.outputs.require-result == 'false'
+        run: |
+          echo "${{ github.triggering_actor }} does not have permissions on this repo."
+          echo "Job originally triggered by ${{ github.actor }} with permission level ${{ steps.checkAccess.outputs.user-permission }}"
+          echo "This jub can be re-run by a maintainer"
+          exit 1
 
       - name: Checkout repo
         uses: actions/checkout@v4
