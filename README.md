@@ -144,6 +144,25 @@ It cannot be used for *removing* policy.
 If you want to remove policy, you will need to use the selinux system
 role directly.
 
+## Variables Exported by the Role
+
+### postfix_default_database_type
+
+This is a string which specifies the default database type used by postfix,
+which is obtained by using `postconf -h default_database_type`.  This can be
+used to set configuration which depends on the type. **NOTE** this is *not*
+supported with Ansible 2.9.
+
+```yaml
+- name: Manage postfix
+  hosts: all
+  vars:
+    postfix_conf:
+      relay_domains: "{{ postfix_default_database_type }}:/etc/postfix/relay_domains"
+  roles:
+    - linux-system-roles.postfix
+```
+
 ## Limitations
 
 There is no way to remove separate configuration parameters.

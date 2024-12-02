@@ -70,6 +70,15 @@
     use: "{{ (__postfix_is_ostree | d(false)) |
              ternary('ansible.posix.rhel_rpm_ostree', omit) }}"
 
+- name: Get default database type from postconf
+  command: postconf -h default_database_type
+  changed_when: false
+  register: __postfix_register_dbtype
+
+- name: Set postfix_default_database_type
+  set_fact:
+    postfix_default_database_type: "{{ __postfix_register_dbtype.stdout | trim }}"
+
 - name: Enable Postfix
   service:
     name: postfix
