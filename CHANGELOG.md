@@ -1,6 +1,18 @@
 Changelog
 =========
 
+[1.6.0] - 2024-12-04
+--------------------
+
+### New Features
+
+- feat: support postfix_default_database_type (#165)
+
+### Other Changes
+
+- ci: Use Fedora 41, drop Fedora 39 (#164)
+- ci: Use Fedora 41, drop Fedora 39 - part two (#166)
+
 [1.5.2] - 2024-10-30
 --------------------
 
