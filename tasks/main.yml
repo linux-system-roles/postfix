@@ -70,7 +70,30 @@
     use: "{{ (__postfix_is_ostree | d(false)) |
              ternary('ansible.posix.rhel_rpm_ostree', omit) }}"
 
-- name: Get default database type from postconf
+- name: Check for IPv6 enabled
+  vars:
+    ipv6_err: >-
+      postconf: fatal: parameter inet_interfaces: no local interface found for ::1
+  block:
+    - name: Get default database type from postconf - 1
+      command: postconf -h default_database_type
+      changed_when: false
+      register: __postfix_register_dbtype
+      failed_when:
+        - __postfix_register_dbtype is failed
+        - __postfix_register_dbtype.stderr is not search(ipv6_err)
+
+    - name: Configure postfix for no ipv6
+      include_tasks: manage_config.yml
+      vars:
+        __postfix_conf:
+          inet_protocols: ipv4
+        __postfix_has_config_changed: True itemstr inet_protocols
+      when:
+        - __postfix_register_dbtype.rc == 1
+        - __postfix_register_dbtype.stderr is search(ipv6_err)
+
+- name: Get default database type from postconf - 2
   command: postconf -h default_database_type
   changed_when: false
   register: __postfix_register_dbtype
@@ -139,57 +162,6 @@
     loop_var: result
 
 - name: Apply changes
-  when: __postfix_has_config_changed | d("") is search("True")
-  block:
-    - name: Gather facts for ansible_date_time
-      setup:
-        filter:
-          - ansible_date_time
-      when: postfix_backup_multiple | bool
-
-    - name: Backup configuration
-      copy:
-        remote_src: true
-        src: /etc/postfix/main.cf
-        dest: /etc/postfix/main.cf.{{ postfix_backup_multiple |
-          ternary(ansible_date_time.iso8601, "backup") }}
-        mode: "0644"
-      when: postfix_backup or postfix_backup_multiple
-
-    - name: Ensure Last modified header is absent
-      lineinfile:
-        path: /etc/postfix/main.cf
-        regexp: '# Last modified:'
-        state: absent
-
-    # Previously, the role inserted a plain-text comment at the top of main.cf.
-    # This task removes this outdated header for compatibility.
-    - name: Ensure the outdated ansible managed header is absent
-      lineinfile:
-        path: /etc/postfix/main.cf
-        regexp: "# This file is managed by [aA]nsible"
-        state: absent
-
-    - name: Ensure ansible_managed header in configuration file
-      vars:
-        __lsr_ansible_managed: "{{
-          lookup('template', 'get_ansible_managed.j2') }}"
-      blockinfile:
-        path: /etc/postfix/main.cf
-        block: "{{ __lsr_ansible_managed }}"
-        insertbefore: BOF
-
-    - name: Configure Postfix
-      command: postconf -e {{ item.key | quote }}={{ item.value | quote }}
-      notify:
-        - Check postfix
-        - Restart postfix
-      with_dict: "{{ postfix_conf }}"
-      when:
-        - item.key not in ['previous']
-        - __postfix_has_config_changed
-          | d("") is search("True itemstr " ~ item.key)
-      changed_when:
-        - item.key not in ['previous']
-        - __postfix_has_config_changed
-          | d("") is search("True itemstr " ~ item.key)
+  include_tasks: manage_config.yml
+  vars:
+    __postfix_conf: "{{ postfix_conf }}"
