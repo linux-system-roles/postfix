@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[1.6.2] - 2025-07-15
+--------------------
+
+### Bug Fixes
+
+- fix: configure postfix to listen only to IPv4 if IPv6 is disabled (#187)
+
 [1.6.1] - 2025-07-09
 --------------------
 
