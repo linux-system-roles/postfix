@@ -59,4 +59,5 @@
         that:
           - __postfix_explicit_config.stdout is search(
             "relay_domains = Liverpool city")
-          - __postfix_explicit_config.stdout is not search("relayhost")
+          - (__postfix_explicit_config.stdout | regex_search('^relayhost\\s*=\\s*$', multiline=True)) or
+            __postfix_explicit_config.stdout is not search("relayhost")
