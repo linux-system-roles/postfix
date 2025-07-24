@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[1.6.3] - 2025-07-24
+--------------------
+
+### Other Changes
+
+- test: accept empty relayhost as unset (#189)
+
 [1.6.2] - 2025-07-15
 --------------------
 
