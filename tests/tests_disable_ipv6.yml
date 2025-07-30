@@ -1,6 +1,8 @@
 ---
 - name: Ensure that the rule runs with IPv6 disabled
   hosts: all
+  tags:
+    - tests::reboot
   gather_facts: false
   tasks:
     - name: Disable IPv6
