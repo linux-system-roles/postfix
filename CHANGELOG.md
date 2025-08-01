@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[1.6.4] - 2025-08-01
+--------------------
+
+### Other Changes
+
+- test: tag tests::reboot for tests_disable_ipv6.yml (#191)
+
 [1.6.3] - 2025-07-24
 --------------------
 
