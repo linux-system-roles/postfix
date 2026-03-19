@@ -13,9 +13,9 @@
 
   tasks:
     - name: Run the role with test postmap file
-      include_role:
-        name: linux-system-roles.postfix
-        public: true
+      include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
     - name: Check if postmap file exists
       stat:
@@ -27,16 +27,19 @@
       assert:
         that: test_file.stat.exists
 
+    - name: Set fact for relay_domains check (ansible version)
+      set_fact:
+        __sr_when_relay_domains_check: "{{ ansible_version['major'] > 2 or ansible_version['minor'] > 9 }}"
+
     - name: Check relay_domains
-      when: ansible_version["major"] > 2 or ansible_version["minor"] > 9
+      when: __sr_when_relay_domains_check
       block:
         # cannot use postfix_default_database_type with postfix_conf
         # in ansible 2.9
         - name: Run the role to test postfix_default_database_type
-          include_role:
-            name: linux-system-roles.postfix
-            public: true
+          include_tasks: tasks/run_role_with_clear_facts.yml
           vars:
+            __sr_public: true
             postfix_conf:
               relay_domains: "{{
                 postfix_default_database_type }}:/etc/postfix/relay_domains"
