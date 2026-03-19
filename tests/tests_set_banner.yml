@@ -10,9 +10,9 @@
 
   tasks:
     - name: Run the role with test smtpd_banner
-      include_role:
-        name: linux-system-roles.postfix
-        public: true
+      include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
     - name: Get smtpd banner
       command: postconf smtpd_banner

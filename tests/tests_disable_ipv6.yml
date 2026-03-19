@@ -3,7 +3,6 @@
   hosts: all
   tags:
     - tests::reboot
-  gather_facts: false
   tasks:
     - name: Disable IPv6
       include_role:
@@ -20,9 +19,9 @@
       meta: flush_handlers
 
     - name: Run the postfix role
-      include_role:
-        name: linux-system-roles.postfix
-        public: true
+      include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        __sr_public: true
 
     - name: Enable IPv6
       include_role:

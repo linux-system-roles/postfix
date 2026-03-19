@@ -3,10 +3,9 @@
   hosts: all
   tasks:
     - name: Run the role with previous=replaced only
-      include_role:
-        name: linux-system-roles.postfix
-        public: true
+      include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
+        __sr_public: true
         postfix_manage_firewall: true
         postfix_manage_selinux: false
         postfix_conf:
@@ -16,10 +15,9 @@
       include_tasks: check_firewall_selinux.yml
 
     - name: Run the role to configure relay_domains and relayhost
-      include_role:
-        name: linux-system-roles.postfix
-        public: true
+      include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
+        __sr_public: true
         postfix_manage_firewall: true
         postfix_manage_selinux: true
         postfix_conf:
@@ -39,8 +37,7 @@
         __fingerprint: "system_role:postfix"
 
     - name: Reset all settings and configure relay_domains
-      include_role:
-        name: linux-system-roles.postfix
+      include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
         postfix_conf:
           previous: replaced
