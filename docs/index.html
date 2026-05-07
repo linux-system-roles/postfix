@@ -156,6 +156,8 @@ id="toc-postfix_backup_multiple">postfix_backup_multiple</a></li>
 id="toc-postfix_manage_firewall">postfix_manage_firewall</a></li>
 <li><a href="#postfix_manage_selinux"
 id="toc-postfix_manage_selinux">postfix_manage_selinux</a></li>
+<li><a href="#postfix_secure_logging"
+id="toc-postfix_secure_logging">postfix_secure_logging</a></li>
 </ul></li>
 <li><a href="#variables-exported-by-the-role"
 id="toc-variables-exported-by-the-role">Variables Exported by the
@@ -284,6 +286,19 @@ the selinux</p>
 <em>adding</em> policy. It cannot be used for <em>removing</em> policy.
 If you want to remove policy, you will need to use the selinux system
 role directly.</p>
+<h2 id="postfix_secure_logging">postfix_secure_logging</h2>
+<p>If <code>true</code>, suppress potentially sensitive output from
+tasks that handle credentials, secrets, and other sensitive data by
+setting <code>no_log: true</code> on those tasks. This prevents
+passwords, API tokens, private keys, and similar sensitive information
+from appearing in Ansible logs and console output.</p>
+<p>If you need to debug issues with credential handling or secret
+management, you can temporarily set
+<code>postfix_secure_logging: false</code> to see the full output from
+these tasks. However, be aware that this may expose sensitive
+information in logs, so it should only be used in development or
+troubleshooting scenarios.</p>
+<p>Default: <code>true</code></p>
 <h1 id="variables-exported-by-the-role">Variables Exported by the
 Role</h1>
 <h2
