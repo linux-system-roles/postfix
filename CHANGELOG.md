@@ -1,6 +1,17 @@
 Changelog
 =========
 
+[1.8.0] - 2026-05-07
+--------------------
+
+### New Features
+
+- feat: new variable `postfix_secure_logging` defaulting to `true` (#234)
+
+### Other Changes
+
+- ci: bump actions/github-script from 8 to 9 (#233)
+
 [1.7.0] - 2026-04-28
 --------------------
 
