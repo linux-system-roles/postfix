@@ -143,7 +143,7 @@
     mode: '0640'
   loop: "{{ postfix_files }}"
   register: __postfix_postmap_files
-  no_log: true
+  no_log: "{{ postfix_secure_logging }}"
   loop_control:
     loop_var: file
   notify:
@@ -155,7 +155,7 @@
   when:
     - result["changed"]
     - result["file"]["postmap"] | d(false)
-  no_log: true
+  no_log: "{{ postfix_secure_logging }}"
   changed_when: true
   loop: "{{ __postfix_postmap_files['results'] }}"
   loop_control:

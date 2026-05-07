@@ -32,3 +32,4 @@ postfix_manage_firewall: false
 # If true, manage the smtp related ports, 25/tcp, 465/tcp, and
 # 587/tcp using the selinux role.
 postfix_manage_selinux: false
+postfix_secure_logging: true
