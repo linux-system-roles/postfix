@@ -75,7 +75,7 @@ postfix_files:
     content: example.com user:password
     postmap: true
   - name: sender_canonical_maps
-    content: /.+/  info@example.com
+    content: /.+/  user@example.com
 ```
 
 This is a list of files that will be placed in /etc/postfix and that can be converted into Postfix Lookup Tables if needed.
