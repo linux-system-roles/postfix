@@ -11,6 +11,12 @@
         - name: Run role with valid defaults
           ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
 
+        - name: Assert postfix service is running after valid defaults
+          ansible.builtin.command: systemctl is-active postfix
+          register: __postfix_service_active
+          changed_when: false
+          failed_when: __postfix_service_active.stdout | trim != 'active'
+
         # ====================================================
         # Section 2: argument_specs validation (Ansible 2.11+)
         # ====================================================
@@ -28,6 +34,11 @@
                 - name: Mark invalid postfix_check type rejected
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_check_type_failed: true
+                  when: >-
+                    'postfix_check' in
+                    (ansible_failed_result | default({}) | to_json)
+                    and 'bool' in
+                    (ansible_failed_result | default({}) | to_json | lower)
 
             - name: Assert invalid postfix_check type was rejected
               ansible.builtin.assert:
@@ -50,6 +61,11 @@
                 - name: Mark invalid postfix_secure_logging type rejected
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_secure_logging_type_failed: true
+                  when: >-
+                    'postfix_secure_logging' in
+                    (ansible_failed_result | default({}) | to_json)
+                    and 'bool' in
+                    (ansible_failed_result | default({}) | to_json | lower)
 
             - name: Assert invalid postfix_secure_logging type was rejected
               ansible.builtin.assert:
@@ -72,6 +88,11 @@
                 - name: Mark invalid postfix_conf type rejected
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_conf_type_failed: true
+                  when: >-
+                    'postfix_conf' in
+                    (ansible_failed_result | default({}) | to_json)
+                    and 'dict' in
+                    (ansible_failed_result | default({}) | to_json | lower)
 
             - name: Assert invalid postfix_conf type was rejected
               ansible.builtin.assert:
@@ -94,6 +115,9 @@
                 - name: Mark invalid postfix_files type rejected
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_files_type_failed: true
+                  when: >-
+                    'postfix_files' in
+                    (ansible_failed_result | default({}) | to_json)
 
             - name: Assert invalid postfix_files type was rejected
               ansible.builtin.assert:
@@ -119,6 +143,8 @@
                     __invalid_input_postfix_files_missing_name_failed: true
                   when: >-
                     'missing required arguments' in
+                    (ansible_failed_result | default({}) | to_json)
+                    and 'name found in postfix_files' in
                     (ansible_failed_result | default({}) | to_json)
 
             - name: Assert missing postfix_files name was rejected
@@ -146,6 +172,8 @@
                   when: >-
                     'missing required arguments' in
                     (ansible_failed_result | default({}) | to_json)
+                    and 'content found in postfix_files' in
+                    (ansible_failed_result | default({}) | to_json)
 
             - name: Assert missing postfix_files content was rejected
               ansible.builtin.assert:
@@ -161,6 +189,12 @@
         # Section 3: assert_role_vars validation (all versions)
         # ====================================================
 
+        - name: Run role with valid postfix_conf previous replaced
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+          vars:
+            postfix_conf:
+              previous: replaced
+
         - name: Assert rejects invalid postfix_conf previous value
           block:
             - name: Run role with invalid postfix_conf previous
@@ -172,6 +206,9 @@
             - name: Mark invalid postfix_conf previous rejected
               ansible.builtin.set_fact:
                 __invalid_input_postfix_conf_previous_failed: true
+              when: >-
+                'postfix_conf.previous must be' in
+                (ansible_failed_result | default({}) | to_json)
 
         - name: Assert invalid postfix_conf previous was rejected
           ansible.builtin.assert:
