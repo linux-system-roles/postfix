@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Assert postfix_conf previous is replaced when set
+  ansible.builtin.assert:
+    that:
+      - postfix_conf.previous == 'replaced'
+    fail_msg: >-
+      postfix_conf.previous must be 'replaced' when set,
+      got {{ postfix_conf.previous | type_debug }}
+  when: postfix_conf.previous is defined

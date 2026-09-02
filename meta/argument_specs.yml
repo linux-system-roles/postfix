@@ -1,0 +1,84 @@
+# SPDX-License-Identifier: MIT
+---
+argument_specs:
+  main:
+    short_description: The postfix role.
+    description: >
+      The postfix role allows you to install, configure, and start the
+      Postfix mail transfer agent. It can apply `main.cf` settings,
+      deploy additional lookup table files under `/etc/postfix`, and
+      optionally manage firewall and SELinux policy for SMTP-related
+      ports.
+    options:
+      postfix_conf:
+        type: dict
+        default: {}
+        description: >
+          Dictionary of Postfix `main.cf` parameter names and values.
+          Keys not supported by the installed Postfix are ignored.
+          Set `previous` to `replaced` to reinstall Postfix and apply
+          configuration on a clean installation.
+      postfix_files:
+        type: list
+        elements: dict
+        default: []
+        description: >
+          List of additional files to place in `/etc/postfix`. Each
+          entry may optionally be converted to a Postfix lookup table
+          with `postmap`.
+        options:
+          name:
+            type: str
+            required: true
+            description: >
+              Base file name under `/etc/postfix` for the file content.
+          content:
+            type: str
+            required: true
+            description: >
+              File content to write under `/etc/postfix/`.
+          postmap:
+            type: bool
+            default: false
+            description: >
+              Whether to run `postmap` on the file after it is created
+              or updated.
+      postfix_check:
+        type: bool
+        default: true
+        description: >
+          Whether to run `postfix check` before Postfix is restarted
+          when the configuration has changed.
+      postfix_backup:
+        type: bool
+        default: false
+        description: >
+          Whether to make a single backup copy of `main.cf` before
+          applying changes. When `postfix_backup_multiple` is `true`,
+          timestamped backups are used instead.
+      postfix_backup_multiple:
+        type: bool
+        default: true
+        description: >
+          Whether to make timestamped backup copies of `main.cf`
+          before applying changes. When `true`, this overrides
+          `postfix_backup`.
+      postfix_manage_firewall:
+        type: bool
+        default: false
+        description: >
+          Whether to open SMTP-related ports (`25/tcp`, `465/tcp`, and
+          `587/tcp`) using the firewall role.
+      postfix_manage_selinux:
+        type: bool
+        default: false
+        description: >
+          Whether to assign `smtp_port_t` to SMTP-related ports using
+          the selinux role.
+      postfix_secure_logging:
+        type: bool
+        default: true
+        description: >
+          Whether to suppress potentially sensitive task output by
+          setting `no_log` on tasks that handle credentials and other
+          secrets.
