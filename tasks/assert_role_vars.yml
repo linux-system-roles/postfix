@@ -6,5 +6,5 @@
       - postfix_conf.previous == 'replaced'
     fail_msg: >-
       postfix_conf.previous must be 'replaced' when set,
-      got {{ postfix_conf.previous | type_debug }}
+      got {{ postfix_conf.previous }}
   when: postfix_conf.previous is defined
