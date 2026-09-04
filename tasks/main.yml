@@ -1,4 +1,7 @@
 ---
+- name: Validate role parameters
+  ansible.builtin.include_tasks: assert_role_vars.yml
+
 - name: Ensure ansible_facts required by role
   include_tasks: set_facts.yml
 
