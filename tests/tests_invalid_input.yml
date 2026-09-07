@@ -12,10 +12,11 @@
           ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
 
         - name: Assert postfix service is running after valid defaults
-          ansible.builtin.command: systemctl is-active postfix
-          register: __postfix_service_active
-          changed_when: false
-          failed_when: __postfix_service_active.stdout | trim != 'active'
+          ansible.builtin.service:
+            name: postfix
+            state: started
+          register: __postfix_service
+          failed_when: __postfix_service is changed  # noqa no-handler
 
         # ====================================================
         # Section 2: argument_specs validation (Ansible 2.11+)
