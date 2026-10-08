@@ -82,3 +82,11 @@ argument_specs:
           Whether to suppress potentially sensitive task output by
           setting `no_log` on tasks that handle credentials and other
           secrets.
+      postfix_transactional_update_reboot_ok:
+        type: raw
+        default: null
+        description: >
+          Whether to permit reboots required by transactional updates. Set
+          to `true` to allow reboots, `false` to disallow reboots, or
+          leave unset so that the role will fail to ensure the reboot
+          requirement is not overlooked. Accepts a boolean value or `null`.
