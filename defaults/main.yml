@@ -34,4 +34,7 @@ postfix_manage_firewall: false
 postfix_manage_selinux: false
 postfix_secure_logging: true
 
+# Transactional update reboot: true reboots, false only notifies, null fails
+postfix_transactional_update_reboot_ok: null
+
 __postfix_write_log_file: false
