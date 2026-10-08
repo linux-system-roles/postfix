@@ -8,3 +8,14 @@
       postfix_conf.previous must be 'replaced' when set,
       got {{ postfix_conf.previous }}
   when: postfix_conf.previous is defined
+
+- name: Assert postfix_transactional_update_reboot_ok is null or a boolean
+  ansible.builtin.assert:
+    that:
+      - >-
+        (postfix_transactional_update_reboot_ok is none)
+        or (postfix_transactional_update_reboot_ok is sameas true)
+        or (postfix_transactional_update_reboot_ok is sameas false)
+    fail_msg: >-
+      postfix_transactional_update_reboot_ok must be null or a boolean,
+      got {{ postfix_transactional_update_reboot_ok | type_debug }}
