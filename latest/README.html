@@ -158,6 +158,8 @@ id="toc-postfix_manage_firewall">postfix_manage_firewall</a></li>
 id="toc-postfix_manage_selinux">postfix_manage_selinux</a></li>
 <li><a href="#postfix_secure_logging"
 id="toc-postfix_secure_logging">postfix_secure_logging</a></li>
+<li><a href="#postfix_transactional_update_reboot_ok"
+id="toc-postfix_transactional_update_reboot_ok">postfix_transactional_update_reboot_ok</a></li>
 </ul></li>
 <li><a href="#variables-exported-by-the-role"
 id="toc-variables-exported-by-the-role">Variables Exported by the
@@ -299,6 +301,18 @@ these tasks. However, be aware that this may expose sensitive
 information in logs, so it should only be used in development or
 troubleshooting scenarios.</p>
 <p>Default: <code>true</code></p>
+<h2
+id="postfix_transactional_update_reboot_ok">postfix_transactional_update_reboot_ok</h2>
+<p>This variable is used to handle reboots required by transactional
+updates. If a transactional update requires a reboot, the role will
+proceed with the reboot if
+<code>postfix_transactional_update_reboot_ok</code> is set to
+<code>true</code>. If set to <code>false</code>, the role will notify
+the user that a reboot is required, allowing for custom handling of the
+reboot requirement. If this variable is not set, the role will fail to
+ensure the reboot requirement is not overlooked. For non-transactional
+update systems, this variable is ignored.</p>
+<p>Default: <code>null</code></p>
 <h1 id="variables-exported-by-the-role">Variables Exported by the
 Role</h1>
 <h2
