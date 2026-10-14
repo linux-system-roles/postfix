@@ -4,6 +4,11 @@
   tags:
     - tests::reboot
   tasks:
+    # the bootloader role does not support SUSE yet
+    - name: Skip test on SUSE
+      meta: end_host
+      when: ansible_facts['os_family'] == 'Suse'
+
     - name: Disable IPv6
       include_role:
         name: fedora.linux_system_roles.bootloader

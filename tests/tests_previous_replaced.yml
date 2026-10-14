@@ -2,6 +2,12 @@
 - name: Test setting previous=replaced with postfix_conf
   hosts: all
   tasks:
+    # the selinux role does not support SLES 15, which runs AppArmor
+    - name: Determine whether to manage SELinux
+      set_fact:
+        __postfix_test_manage_selinux: "{{ ansible_facts['distribution'] != 'SLES' or
+          ansible_facts['distribution_major_version'] != '15' }}"
+
     - name: Run the role with previous=replaced only
       include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
@@ -19,7 +25,7 @@
       vars:
         __sr_public: true
         postfix_manage_firewall: true
-        postfix_manage_selinux: true
+        postfix_manage_selinux: "{{ __postfix_test_manage_selinux }}"
         postfix_conf:
           relay_domains: London
           relayhost: example.com
@@ -56,5 +62,5 @@
         that:
           - __postfix_explicit_config.stdout is search(
             "relay_domains = Liverpool city")
-          - (__postfix_explicit_config.stdout | regex_search('^relayhost\\s*=\\s*$', multiline=True)) or
+          - __postfix_explicit_config.stdout is search('^relayhost\\s*=\\s*$', multiline=True) or
             __postfix_explicit_config.stdout is not search("relayhost")

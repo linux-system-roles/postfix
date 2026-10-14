@@ -2,6 +2,12 @@
 - name: Ensure that the rule runs with default parameters
   hosts: all
   tasks:
+    # the selinux role does not support SLES 15, which runs AppArmor
+    - name: Determine whether to manage SELinux
+      set_fact:
+        __postfix_test_manage_selinux: "{{ ansible_facts['distribution'] != 'SLES' or
+          ansible_facts['distribution_major_version'] != '15' }}"
+
     - name: See if /dev/log exists for the fingerprint check
       ansible.builtin.stat:
         path: /dev/log
@@ -17,7 +23,7 @@
       vars:
         __sr_public: true
         postfix_manage_firewall: true
-        postfix_manage_selinux: true
+        postfix_manage_selinux: "{{ __postfix_test_manage_selinux }}"
         __postfix_write_log_file: true
 
     - name: Get fingerprint entries from journal

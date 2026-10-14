@@ -31,6 +31,12 @@
       assert:
         that: _postfix_selinux | length > 0
 
+    - name: Ensure semanage is available for the check
+      package:
+        name: policycoreutils-python-utils
+        state: present
+      when: ansible_facts['os_family'] == 'Suse'
+
     - name: Check associated selinux
       shell: |-
         set -euo pipefail
