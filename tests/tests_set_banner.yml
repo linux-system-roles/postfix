@@ -6,9 +6,15 @@
     postfix_conf:
       smtpd_banner: test
     postfix_manage_firewall: false
-    postfix_manage_selinux: true
+    postfix_manage_selinux: "{{ __postfix_test_manage_selinux }}"
 
   tasks:
+    # the selinux role does not support SLES 15, which runs AppArmor
+    - name: Determine whether to manage SELinux
+      set_fact:
+        __postfix_test_manage_selinux: "{{ ansible_facts['distribution'] != 'SLES' or
+          ansible_facts['distribution_major_version'] != '15' }}"
+
     - name: Run the role with test smtpd_banner
       include_tasks: tasks/run_role_with_clear_facts.yml
       vars:
