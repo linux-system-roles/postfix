@@ -37,4 +37,9 @@ postfix_secure_logging: true
 # Transactional update reboot: true reboots, false only notifies, null fails
 postfix_transactional_update_reboot_ok: null
 
+# Additional packages to install alongside postfix, e.g.:
+# postfix_additional_packages:
+#   - postfix-ldap
+postfix_additional_packages: []
+
 __postfix_write_log_file: false

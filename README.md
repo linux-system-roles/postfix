@@ -170,6 +170,21 @@ update systems, this variable is ignored.
 
 Default: `null`
 
+### postfix_additional_packages
+
+List of additional packages to install alongside Postfix. For example, to
+install LDAP support:
+
+```yaml
+postfix_additional_packages:
+  - postfix-ldap
+```
+
+Package names vary by distribution. For example, on EL7 LDAP support is
+built into the `postfix` package, so there is no `postfix-ldap` package.
+
+Default: `[]`
+
 ## Variables Exported by the Role
 
 ### postfix_default_database_type
