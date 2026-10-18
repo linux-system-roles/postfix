@@ -1,0 +1,29 @@
+---
+- name: Install additional packages with postfix role
+  hosts: all
+  tasks:
+    - name: Pick an add on package that exists on this platform
+      set_fact:
+        additional_packages: "{{ 'postfix-perl-scripts'
+          if ansible_facts['distribution'] in ['RedHat', 'CentOS']
+          and ansible_facts['distribution_major_version'] | int < 8 else 'postfix-ldap' }}"
+
+    - name: Run the role postfix with additional packages
+      include_tasks: tasks/run_role_with_clear_facts.yml
+      vars:
+        postfix_additional_packages:
+          - "{{ additional_packages }}"
+
+    - name: Gather package facts
+      package_facts:
+      no_log: "{{ ansible_verbosity < 2 }}"
+
+    - name: Check that the additional package is installed
+      assert:
+        that:
+          - additional_packages in ansible_facts.packages
+
+    - name: Remove the additional package so it does not affect other tests
+      package:
+        name: "{{ additional_packages }}"
+        state: absent

@@ -90,3 +90,10 @@ argument_specs:
           to `true` to allow reboots, `false` to disallow reboots, or
           leave unset so that the role will fail to ensure the reboot
           requirement is not overlooked. Accepts a boolean value or `null`.
+      postfix_additional_packages:
+        type: list
+        elements: str
+        default: []
+        description: >
+          List of additional packages to install alongside Postfix
+          such as `postfix-ldap`.
