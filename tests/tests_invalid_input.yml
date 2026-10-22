@@ -2,6 +2,13 @@
 ---
 - name: Verify invalid parameters are rejected
   hosts: all
+  vars:
+    __invalid_input_failure_messages: >-
+      {{ ([ansible_failed_result.msg | default('') | string,
+           ansible_failed_result.msg.msg | default('') | string]
+          + (ansible_failed_result.results | default([])
+             | map(attribute='msg') | map('default', '') | list))
+         | join(' ') }}
   tasks:
     - name: Run invalid input tests
       block:
@@ -35,11 +42,13 @@
                 - name: Mark invalid postfix_check type rejected
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_check_type_failed: true
-                  when: >-
-                    'postfix_check' in
-                    (ansible_failed_result | default({}) | to_json)
-                    and 'bool' in
-                    (ansible_failed_result | default({}) | to_json | lower)
+                  when:
+                    - >-
+                      "argument 'postfix_check' is of type" in
+                      __invalid_input_failure_messages
+                    - >-
+                      'unable to convert to bool' in
+                      __invalid_input_failure_messages
 
             - name: Assert invalid postfix_check type was rejected
               ansible.builtin.assert:
@@ -62,11 +71,13 @@
                 - name: Mark invalid postfix_secure_logging type rejected
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_secure_logging_type_failed: true
-                  when: >-
-                    'postfix_secure_logging' in
-                    (ansible_failed_result | default({}) | to_json)
-                    and 'bool' in
-                    (ansible_failed_result | default({}) | to_json | lower)
+                  when:
+                    - >-
+                      "argument 'postfix_secure_logging' is of type" in
+                      __invalid_input_failure_messages
+                    - >-
+                      'unable to convert to bool' in
+                      __invalid_input_failure_messages
 
             - name: Assert invalid postfix_secure_logging type was rejected
               ansible.builtin.assert:
@@ -89,11 +100,13 @@
                 - name: Mark invalid postfix_conf type rejected
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_conf_type_failed: true
-                  when: >-
-                    'postfix_conf' in
-                    (ansible_failed_result | default({}) | to_json)
-                    and 'dict' in
-                    (ansible_failed_result | default({}) | to_json | lower)
+                  when:
+                    - >-
+                      "argument 'postfix_conf' is of type" in
+                      __invalid_input_failure_messages
+                    - >-
+                      'unable to convert to dict' in
+                      __invalid_input_failure_messages
 
             - name: Assert invalid postfix_conf type was rejected
               ansible.builtin.assert:
@@ -116,9 +129,13 @@
                 - name: Mark invalid postfix_files type rejected
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_files_type_failed: true
-                  when: >-
-                    'postfix_files' in
-                    (ansible_failed_result | default({}) | to_json)
+                  when:
+                    - >-
+                      "Elements value for option 'postfix_files' is of type"
+                      in __invalid_input_failure_messages
+                    - >-
+                      'unable to convert to dict' in
+                      __invalid_input_failure_messages
 
             - name: Assert invalid postfix_files type was rejected
               ansible.builtin.assert:
@@ -143,10 +160,8 @@
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_files_missing_name_failed: true
                   when: >-
-                    'missing required arguments' in
-                    (ansible_failed_result | default({}) | to_json)
-                    and 'name found in postfix_files' in
-                    (ansible_failed_result | default({}) | to_json)
+                    'missing required arguments: name found in postfix_files'
+                    in __invalid_input_failure_messages
 
             - name: Assert missing postfix_files name was rejected
               ansible.builtin.assert:
@@ -171,10 +186,8 @@
                   ansible.builtin.set_fact:
                     __invalid_input_postfix_files_missing_content_failed: true
                   when: >-
-                    'missing required arguments' in
-                    (ansible_failed_result | default({}) | to_json)
-                    and 'content found in postfix_files' in
-                    (ansible_failed_result | default({}) | to_json)
+                    'missing required arguments: content found in postfix_files'
+                    in __invalid_input_failure_messages
 
             - name: Assert missing postfix_files content was rejected
               ansible.builtin.assert:
@@ -208,8 +221,8 @@
               ansible.builtin.set_fact:
                 __invalid_input_postfix_conf_previous_failed: true
               when: >-
-                'postfix_conf.previous must be' in
-                (ansible_failed_result | default({}) | to_json)
+                "postfix_conf.previous must be 'replaced' when set, got not_replaced"
+                in __invalid_input_failure_messages
 
         - name: Assert invalid postfix_conf previous was rejected
           ansible.builtin.assert:
@@ -221,6 +234,28 @@
               assert_role_vars should reject postfix_conf.previous
               when it is not 'replaced'
 
+        - name: Assert rejects non-boolean transactional update reboot option
+          block:
+            - name: Run role with non-boolean transactional update reboot option
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                postfix_transactional_update_reboot_ok: not_a_bool
+          rescue:
+            - name: Mark non-boolean transactional update reboot option rejected
+              ansible.builtin.set_fact:
+                __invalid_input_transactional_reboot_type_failed: true
+              when: >-
+                'postfix_transactional_update_reboot_ok must be null or a boolean'
+                in __invalid_input_failure_messages
+
+        - name: Assert non-boolean transactional update reboot option was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_transactional_reboot_type_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject a non-boolean
+              postfix_transactional_update_reboot_ok value
+
       always:
         - name: Clear test facts
           ansible.builtin.set_fact:
@@ -231,4 +266,5 @@
             __invalid_input_postfix_files_missing_name_failed:
             __invalid_input_postfix_files_missing_content_failed:
             __invalid_input_postfix_conf_previous_failed:
+            __invalid_input_transactional_reboot_type_failed:
           tags: tests::cleanup
