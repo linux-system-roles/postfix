@@ -2,10 +2,10 @@
 - name: Test setting previous=replaced with postfix_conf
   hosts: all
   tasks:
-    # the selinux role does not support SLES 15, which runs AppArmor
+    # the selinux role does not support SUSE 15, which runs AppArmor
     - name: Determine whether to manage SELinux
       set_fact:
-        __postfix_test_manage_selinux: "{{ ansible_facts['distribution'] != 'SLES' or
+        __postfix_test_manage_selinux: "{{ ansible_facts['os_family'] != 'Suse' or
           ansible_facts['distribution_major_version'] != '15' }}"
 
     - name: Run the role with previous=replaced only
